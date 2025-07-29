@@ -174,7 +174,7 @@ The children prop is special:
 * Can be another object (for nested elements)
 * Can be an array (for multiple children)
 
-**2. State/Props Change :** When data changes (e.g setState), React creates a new Virtual DOM tree.
+**2. State/Props Change :** When data changes (e.g `setState`), React creates a new Virtual DOM tree.
 
 **3. Diffing (Reconciliation) :** React compares the new VDOM with the previous DOM (Diffing Algorithm) to find out miimal changes that are needed.
 
@@ -190,3 +190,14 @@ The children prop is special:
 | Speed|Fast (JS Objects) | Slow (Browser regenerates code everytime)
 | Updates |Batched & optimized| Immediate & memory costly
 |Memory|Lightweight (Less memory)|Heavy (Browser Rendered)
+
+### 👉 Reconciliation
+React's algorithm for efficiently upgrading the DOM when state/props change.
+
+* It's the diffing process that compares the new Virtual DOM with the previous one to determine the minimal changes needed for the real DOM.
+
+➡️ How does it work?
+* Trigger : A component's state/props change
+* New Virtual DOM tree : React creates a new virtual DOM tree.
+* Diffing : React compares the new tree with the old one. (reconciliation)
+* Update : Only the changed parts are applied to the real DOM.

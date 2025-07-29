@@ -120,3 +120,73 @@ _Example: Angular, Django, Ruby on Rails_
 1. Built in tools like tools for routing, state management etc. is already included.
 2. Scalability : Enforces best practices for large teams.
 3. Less flexibility : Must follow the framework's convention.
+
+### 👉 React A _Framework_ or _Library_
+**React is a library (for UI components), but it's an ecosystem (React Router, Redux, Next.JS) can feel like a framework.**
+
+Next.JS is a framework built on React as it adds routing, SSR and other opinionated features.
+
+### ➡️ Why does Library/Framework matter?
+Libraries give you freedom but requires more decisions. While Frameworks speed up the development but limit flexibility. 
+* We use library if we need lightweight control (e.g React for dynamic UI)
+* We use a framework if we want to Structure/Reliability (e.g Angular for Enterprise Applications)
+
+| Features  | Library (e.g React) | Framework (e.g Angular) |
+| :-------------: | :-------------: |:-------------:|
+| Control Flow|You call the library | Framework calls your code
+| Flexibility |High (Pick & Choose)  | Low (Follow Conventions)
+| Use Case    |Add functionality to an app|Build fullstack apps
+| Learning Curve    |Easier to Start|Steaper
+| Use Case    |Lightweight|Often heavier
+
+### ✅ Virtual DOM
+The Virtual DOM (VDOM) is a lightweight, in-memeory represenation of the real Document Object Model (DOM) used by the libraries like React to optimize UI updates. 
+
+_It's a core reason why react is so fast._
+
+**Working Procedure**
+
+**1. Initial Render :** React creates a Virtual DOM tree (basically a JavaScript Object) that mirrors the real DOM.
+
+<u>HTML</u>
+```
+<div>
+    <h1> Hello React </h1>
+</div>
+```
+
+<u>React DOM</u>
+```
+{type: 'div',
+  props: {
+    children: {
+      type: 'h1',
+      props: {
+        children: "Hello React!"}}}}
+```
+Every HTML element becomes an object with:
+
+* type: The tag name as a string
+* props: An object containing all properties (including children)
+
+The children prop is special:
+* Can be a string (for text nodes)
+* Can be another object (for nested elements)
+* Can be an array (for multiple children)
+
+**2. State/Props Change :** When data changes (e.g setState), React creates a new Virtual DOM tree.
+
+**3. Diffing (Reconciliation) :** React compares the new VDOM with the previous DOM (Diffing Algorithm) to find out miimal changes that are needed.
+
+**4. Batch Update to Real DOM :** Only the changed parts are updated in real DOM (avoiding full renders, which is time & memory consuming)
+
+### Why do we use Virtual DOM?
+* It minimizes direct DOM manipulations (slowest parts of the web application)
+* Batches multiple updates into a single render cycle.
+* Cross Platform : React Native can also use similar concepts for making mobile UIs
+
+| Features  | Virtual DOM | Real DOM |
+| :-------------: | :-------------: |:-------------:|
+| Speed|Fast (JS Objects) | Slow (Browser regenerates code everytime)
+| Updates |Batched & optimized| Immediate & memory costly
+|Memory|Lightweight (Less memory)|Heavy (Browser Rendered)

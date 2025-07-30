@@ -263,3 +263,92 @@ As a better example:
 * `rootContainer` gets the `div#root`.
 * `ReactDOM.createRoot()` creates a root for the React app (React 18 style).
 * `root.render(App())`; renders the result of calling the App function.
+
+_JSX is not pure JS as JS engine dosen't understand JSX. JSX code gets transpilled (converted into the code browser can understand) prior going into the JSX engine._
+
+**Component Structure + JSX Structure:**
+```
+import React from 'react';
+
+function MyComponent() {
+    return (
+        <div>
+            <h1>Hello World!</h1>
+            <p>This is Pratik Speaking</p>
+        </div>
+    );
+}
+
+export default MyComponent;
+```
+_In XML we can create our custom tags which we call user defined tags_
+
+JSX => React.createElement => ReactElement- JS Object => HTML Element (at the time of Render)
+
+We need to use cammel case while declaring attributes in JSX.
+
+### 🌟 Key Features of JSX
+
+* Embeded Expressions : You can embed JS expressions inside JSX using `{}`
+```
+const name = 'Alice'
+const greeting = <h1> Hello, {name}!</h1>
+```
+- Self closing tags like ```<img/>```
+- JSX use ```className``` instead of ```class```
+- Inline CSS styles are written in Javascript objects:
+```
+<div style = {{color: 'red', fontSize: '20px'}}>
+        Styled
+    </div>
+```
+- We can use React components like HTML tags:
+```
+function Welcome (props){
+    return <h1> Hello, {props.name} </h1>
+}
+```
+
+**How JSX Works:**
+* Welcome is a functional component that accepts props as its parameter
+* It returns JSX that renders an ```<h1>``` heading
+* The component uses the name props inside curly braces `{}` to display dynamic content.
+
+Using the Component:
+```
+const element = <Welcome name="John Doe" />;
+```
+**What Happens When This Renders:**
+* React creates an instance of the Welcome component
+* It passes the props object { name: 'John Doe' } to the component
+* The component returns: ```<h1>Hello, John Doe</h1>```
+* This JSX gets converted to actual DOM elements
+
+**React converts this JSX to something like:**
+
+```
+{type: Welcome,
+  props: {
+    name: 'John Doe'}}
+```
+
+### Why Use JSX
+- It's easier to visualize UI structure. 
+- It's optimized to React.
+
+> Babel compiles JSX into `React.createElement()` calls:
+
+<u>JSX:</u>
+```
+<div id='app'>
+    Hello World!
+</div>
+```
+<u>JavaScript:</u>
+`React.createElement("div", {id : "app"}, "Hello World")`
+
+**Babel is a JavaScript transpiler. Transpiles modern JavaScript (ES6+) into backward-compatible versions (ES5)**
+
+**Converts newer JS syntax into older syntax that can run in older browsers. (Different developers writting different versions of JavaScript, henceforth Babel is used)**
+
+_Example: Arrow functions () => {} → function() {}_

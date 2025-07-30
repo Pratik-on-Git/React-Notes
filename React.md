@@ -229,3 +229,37 @@ const jsxHeading = <h1 id="heading"> This is React </h1>;
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(heading);
 ```
+As a better example:
+
+```
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <script>
+      function App() {
+        return React.createElement(
+          "div",
+          {},
+          React.createElement("h1", {}, "Hello World")
+        );
+      }
+
+      const rootContainer = document.getElementById("root");
+      const root = ReactDOM.createRoot(rootContainer);
+      root.render(App());
+    </script>
+  </body>
+</html>
+```
+
+* A basic HTML element with `id="root"` — this is the mount point for the React app.
+* `App` is a React component. It returns a React element (`<div><h1>Hello World</h1></div>`) using `React.createElement`.
+* No JSX is used here — it's all vanilla JS.
+* `rootContainer` gets the `div#root`.
+* `ReactDOM.createRoot()` creates a root for the React app (React 18 style).
+* `root.render(App())`; renders the result of calling the App function.

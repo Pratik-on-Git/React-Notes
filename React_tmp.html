@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>React.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+html,footer,header{
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Custom MD PDF CSS
+ */
+html,footer,header{
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+
+ }
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+<link rel="stylesheet" href="file:///r%3A/2.Travail/1.Enseignement/Cours/_1.Outils/2.Developpement/1.SCSS/main.css" type="text/css"><link rel="stylesheet" href="file:///d%3A/rdaros/Cours/_1.Outils/2.Developpement/1.SCSS/main.css" type="text/css">
+</head>
+
+<body>
+    <h1 id="react-%E2%9A%9B%F0%9F%92%99">React ⚛💙</h1>
+<h3 id="%E2%9C%85-also-known-as-reactjs-reactjs">✅ Also known as React.js/ React.JS</h3>
+<h4 id="free--open-source-javascript-library-for-building-user-interfaces-uis">Free &amp; Open-source JavaScript library for building user interfaces (UIs).</h4>
+<p><strong>Created by Meta (Facebook)</strong> &amp; is now maintained by Meta &amp; community of developers.</p>
+<blockquote>
+<p>HTML/CSS/JS code refreshes the whole page unexpectedly upon interaction (like clicking a button, submitting a form, etc.)</p>
+</blockquote>
+<ul>
+<li>React is used to build <em>SPAs (Single Page Applications)</em></li>
+<li>Creates <em>reusable UI components</em></li>
+<li>Develops dynamic, fast &amp; scalable front end applications.</li>
+</ul>
+<h4 id="%F0%9F%91%89-reactjs-uses-a-virtual-dom-mechanism-to-efficiently-update-the-html-dom">👉 ReactJS uses a Virtual DOM mechanism to efficiently update the HTML DOM.</h4>
+<p>Instead of reloading the entire DOM, the virtual DOM updates only the specific elements that have changed, resulting in faster performance.</p>
+<hr>
+<h3 id="%F0%9F%91%A8%E2%80%8D%F0%9F%92%BB-react-follows-a-component-driven-architecture">👨‍💻 React follows a Component-Driven Architecture</h3>
+<p>The user interface is built by composing independent, reusable pieces called components. Each component manages its own logic and rendering, making development more modular, scalable, and easier to maintain.</p>
+<p><strong>A Component is a reusable UI element.</strong></p>
+<p><strong>React Element :</strong> an object that describes the properties of an actual DOM node which will be created by React.</p>
+<p>Simple Structure of a React Elements:</p>
+<pre class="hljs"><code><div>{
+    type: &quot;button&quot;
+    props: {
+        classname: &quot;btn&quot;
+    }
+}
+</div></code></pre>
+<h3 id="%F0%9F%8C%9F-spassingle-page-application">🌟 SPAs(Single Page Application)</h3>
+<p>A web application that loads a single HTML page and dynamically updates content as users interact with it is known as a Single Page Application (SPA).</p>
+<p>In an SPA, the entire page doesn't reload with every interaction; only the necessary parts of the page are updated, providing a smoother and faster user experience.</p>
+<ul>
+<li>It uses client side rendering (CSR) [Javascript Updates the DOM]</li>
+<li>Communicates to server via APIs (e.g. REST, GraphQL etc.)</li>
+</ul>
+<p><em>Example: Facebook, Gmail, Twitter</em></p>
+<h4 id="%E2%9C%85-pros">✅ Pros</h4>
+<ul>
+<li>Faster Navigation (No full page reloads)</li>
+<li>Smoother UX</li>
+<li>Easier to build complex, interactive UIs</li>
+<li>Good for real time updates</li>
+</ul>
+<h4 id="%E2%9D%8C-cons">❌ Cons</h4>
+<ul>
+<li>Slower initial loads (Heavy JS Bundles)</li>
+<li>Search engines historically struggled with Javascript heavy SPAs. But solutions like Next.JS do help.</li>
+<li>Browser history management needs extra efforts (e.g React Router)</li>
+</ul>
+<h3 id="%F0%9F%8C%9F-mpasmulti-page-application">🌟 MPAs(Multi Page Application)</h3>
+<p>A traditional web app where each page is a seperate HTML document loaded from the server.</p>
+<ul>
+<li>It uses Server side rendering (SSR) [Server generats HTML for each request]</li>
+</ul>
+<p><em>Example: Amazon, Wordpress, Old school sites</em></p>
+<h4 id="%E2%9C%85-pros">✅ Pros</h4>
+<ul>
+<li>Better SEO out of the box as each page is a seperate HTML page.</li>
+<li>faster initial loads (Less Javascript code, server handles rendering)</li>
+<li>Easier to scale as pages can be cached independently.</li>
+</ul>
+<h4 id="%E2%9D%8C-cons">❌ Cons</h4>
+<ul>
+<li>Slower navigation (full page reloads upon each interaction)</li>
+<li>Less interactivity (more clunky UX)</li>
+<li>Harder to maintain state (e.g Shopping Cart across pages)</li>
+</ul>
+<h3 id="%F0%9F%91%89-where-to-use-spa--mpa">👉 Where to use SPA &amp; MPA**</h3>
+<ul>
+<li>If you need a dynamic, app alike experience you need to use SPA (e.g SaaS Tool, Social Network Site)</li>
+<li>If you prioritize SEO, Simplicity, Server-Driven content you need to use MPA (e.g Blogs, News etc.)</li>
+</ul>
+<h3 id="%E2%9E%BF-hybrid-approach">➿ Hybrid Approach</h3>
+<p>Modern frameworks like <strong>Next.JS (React), Nuxt.JS (Vue)</strong> allows <strong>SSR + SPA</strong> hybrid models for a better SEO &amp; Optimization.</p>
+<p>This approach is best for both cases.</p>
+<h3 id="%F0%9F%91%A8%E2%80%8D%F0%9F%92%BB-react-application-is-made-up-of-multiple-components">👨‍💻 React application is made up of Multiple Components</h3>
+<ul>
+<li>Each of them are <strong>responsible for outputting a small, reusable piece of HTML</strong>.</li>
+<li><strong>Components can be nested within other components to allow complex applications</strong> to be built out of simple building blocks.</li>
+</ul>
+<h3 id="%F0%9F%91%89-key-features-of-react">👉 Key Features of React</h3>
+<ol>
+<li>
+<p><strong>Component Based Architecture :</strong> React apps are built using reusable components, making code easier to manage &amp; scale</p>
+</li>
+<li>
+<p><strong>Virtual DOM :</strong> React uses a Virtual DOM to efficiently update only the parts of the page that change, improving performance.</p>
+</li>
+<li>
+<p><strong>Declare Syntax :</strong> Instead of manually updating the DOM like Vanilla JS, you describe how the UI should look &amp; React handle updates automatically.</p>
+</li>
+<li>
+<p><strong>Strong Ecosystem :</strong> React has a massive community, tons of libraries (like Redux, Next.JS &amp; Extensive documentation)</p>
+</li>
+<li>
+<p><strong>Works with other frameworks :</strong> React can be integrated with backend/mobile apps. (Node.JS, Django) [React Native]</p>
+</li>
+</ol>
+<h3 id="%F0%9F%93%9A-library">📚 Library</h3>
+<p>A collection of pre-written functions/modules that you can call as needed. It only provides the boilerplate for the project.</p>
+<p><strong>Key Idea :</strong> You can control the application's flow &amp; structure. The library will provide you utility.</p>
+<p><strong>Analogy :</strong> Like a toolbox, you'll pick which tools (functions) to use &amp; when to use.</p>
+<p><em>Example: React (UI Library), Loadash (Utility Function), JQuery (DOM Manipulation)</em></p>
+<p><strong>Charecteristics :</strong></p>
+<ol>
+<li>Flexibility : Uses only what I need</li>
+<li>Less Opinionated : No Strict rules on application structure</li>
+<li>More Responsibility : You decide how to integrate everything together.</li>
+</ol>
+<h3 id="%F0%9F%96%BC%EF%B8%8F-framework"><strong>🖼️ Framework</strong></h3>
+<p>A fully featured structure that dictates how to build an application (includes library, tools, rules)</p>
+<p><strong>Key Idea :</strong> It controls the application's flow. The library will provide you utility.</p>
+<p><strong>Analogy :</strong> Like a blueprint, you build within it's rules.</p>
+<p><em>Example: Angular, Django, Ruby on Rails</em></p>
+<p><strong>Charecteristics :</strong></p>
+<ol>
+<li>Built in tools like tools for routing, state management etc. is already included.</li>
+<li>Scalability : Enforces best practices for large teams.</li>
+<li>Less flexibility : Must follow the framework's convention.</li>
+</ol>
+<h3 id="%F0%9F%91%89-react-a-framework-or-library">👉 React A <em>Framework</em> or <em>Library</em></h3>
+<p><strong>React is a library (for UI components), but it's an ecosystem (React Router, Redux, Next.JS) can feel like a framework.</strong></p>
+<p>Next.JS is a framework built on React as it adds routing, SSR and other opinionated features.</p>
+<h3 id="%E2%9E%A1%EF%B8%8F-why-does-libraryframework-matter">➡️ Why does Library/Framework matter?</h3>
+<p>Libraries give you freedom but requires more decisions. While Frameworks speed up the development but limit flexibility.</p>
+<ul>
+<li>We use library if we need lightweight control (e.g React for dynamic UI)</li>
+<li>We use a framework if we want to Structure/Reliability (e.g Angular for Enterprise Applications)</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Features</th>
+<th style="text-align:center">Library (e.g React)</th>
+<th style="text-align:center">Framework (e.g Angular)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Control Flow</td>
+<td style="text-align:center">You call the library</td>
+<td style="text-align:center">Framework calls your code</td>
+</tr>
+<tr>
+<td style="text-align:center">Flexibility</td>
+<td style="text-align:center">High (Pick &amp; Choose)</td>
+<td style="text-align:center">Low (Follow Conventions)</td>
+</tr>
+<tr>
+<td style="text-align:center">Use Case</td>
+<td style="text-align:center">Add functionality to an app</td>
+<td style="text-align:center">Build fullstack apps</td>
+</tr>
+<tr>
+<td style="text-align:center">Learning Curve</td>
+<td style="text-align:center">Easier to Start</td>
+<td style="text-align:center">Steaper</td>
+</tr>
+<tr>
+<td style="text-align:center">Use Case</td>
+<td style="text-align:center">Lightweight</td>
+<td style="text-align:center">Often heavier</td>
+</tr>
+</tbody>
+</table>
+<h3 id="%E2%9C%85-virtual-dom">✅ Virtual DOM</h3>
+<p>The Virtual DOM (VDOM) is a lightweight, in-memeory represenation of the real Document Object Model (DOM) used by the libraries like React to optimize UI updates.</p>
+<p><em>It's a core reason why react is so fast.</em></p>
+<p><strong>Working Procedure</strong></p>
+<p><strong>1. Initial Render :</strong> React creates a Virtual DOM tree (basically a JavaScript Object) that mirrors the real DOM.</p>
+<p><u>HTML</u></p>
+<pre class="hljs"><code><div>&lt;div&gt;
+    &lt;h1&gt; Hello React &lt;/h1&gt;
+&lt;/div&gt;
+</div></code></pre>
+<p><u>React DOM</u></p>
+<pre class="hljs"><code><div>{type: 'div',
+  props: {
+    children: {
+      type: 'h1',
+      props: {
+        children: &quot;Hello React!&quot;}}}}
+</div></code></pre>
+<p>Every HTML element becomes an object with:</p>
+<ul>
+<li>type: The tag name as a string</li>
+<li>props: An object containing all properties (including children)</li>
+</ul>
+<p>The children prop is special:</p>
+<ul>
+<li>Can be a string (for text nodes)</li>
+<li>Can be another object (for nested elements)</li>
+<li>Can be an array (for multiple children)</li>
+</ul>
+<p><strong>2. State/Props Change :</strong> When data changes (e.g <code>setState</code>), React creates a new Virtual DOM tree.</p>
+<p><strong>3. Diffing (Reconciliation) :</strong> React compares the new VDOM with the previous DOM (Diffing Algorithm) to find out miimal changes that are needed.</p>
+<p><strong>4. Batch Update to Real DOM :</strong> Only the changed parts are updated in real DOM (avoiding full renders, which is time &amp; memory consuming)</p>
+<h3 id="why-do-we-use-virtual-dom">Why do we use Virtual DOM?</h3>
+<ul>
+<li>It minimizes direct DOM manipulations (slowest parts of the web application)</li>
+<li>Batches multiple updates into a single render cycle.</li>
+<li>Cross Platform : React Native can also use similar concepts for making mobile UIs</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Features</th>
+<th style="text-align:center">Virtual DOM</th>
+<th style="text-align:center">Real DOM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Speed</td>
+<td style="text-align:center">Fast (JS Objects)</td>
+<td style="text-align:center">Slow (Browser regenerates code everytime)</td>
+</tr>
+<tr>
+<td style="text-align:center">Updates</td>
+<td style="text-align:center">Batched &amp; optimized</td>
+<td style="text-align:center">Immediate &amp; memory costly</td>
+</tr>
+<tr>
+<td style="text-align:center">Memory</td>
+<td style="text-align:center">Lightweight (Less memory)</td>
+<td style="text-align:center">Heavy (Browser Rendered)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="%F0%9F%91%89-reconciliation">👉 Reconciliation</h3>
+<p>React's algorithm for efficiently upgrading the DOM when state/props change.</p>
+<ul>
+<li>It's the diffing process that compares the new Virtual DOM with the previous one to determine the minimal changes needed for the real DOM.</li>
+</ul>
+<p>➡️ How does it work?</p>
+<ul>
+<li>Trigger : A component's state/props change</li>
+<li>New Virtual DOM tree : React creates a new virtual DOM tree.</li>
+<li>Diffing : React compares the new tree with the old one. (reconciliation)</li>
+<li>Update : Only the changed parts are applied to the real DOM.</li>
+</ul>
+<h3 id="%F0%9F%93%9A-reconciliation-vs-virtual-dom">📚 Reconciliation v/s Virtual DOM?</h3>
+<p>Virtual DOM is a lightweight copy of real DOM while Reconciliation is an algorithm that compares Virtual DOM snapshot with the old DOM to update the real DOM efficiently.</p>
+<ul>
+<li>Reconciliation minimizes costly DOM operations.</li>
+<li>Gives smooth UI &amp; updates feel instantaneous.</li>
+<li>Complex diffing can slow down a lot of large scale applications.</li>
+</ul>
+<h3 id="%F0%9F%91%89-jsx">👉 JSX</h3>
+<p>JavaScript XML/ JSX is a syntax extension for JavaScript, primarily used with React to describe UI components.</p>
+<p><em>Till now we've seperately been using HTML, CSS, JS</em></p>
+<p>Through JSX we can write HTML like code in JavaScript, which later on will be transformed into JavaScript code by React library.</p>
+<ul>
+<li>JSX &amp; React are different. We can write React without JSX.</li>
+</ul>
+<p><em>React.createElement =&gt; Object =&gt; HTMLElement(render)</em></p>
+<pre class="hljs"><code><div>const Heading = React.createElement (&quot;h1&quot;, {id: &quot;heading&quot;}, &quot;This is React&quot;)
+</div></code></pre>
+<p><em>JSX - HTML like/ XML like syntax</em></p>
+<pre class="hljs"><code><div>const jsxHeading = &lt;h1 id=&quot;heading&quot;&gt; This is React &lt;/h1&gt;;
+const root = ReactDOM.createRoot(document.getElementById(&quot;root&quot;));
+root.render(heading);
+</div></code></pre>
+
+</body>
+
+</html>

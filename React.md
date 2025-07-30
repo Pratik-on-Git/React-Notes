@@ -201,3 +201,31 @@ React's algorithm for efficiently upgrading the DOM when state/props change.
 * New Virtual DOM tree : React creates a new virtual DOM tree.
 * Diffing : React compares the new tree with the old one. (reconciliation)
 * Update : Only the changed parts are applied to the real DOM.
+
+### 📚 Reconciliation v/s Virtual DOM?
+Virtual DOM is a lightweight copy of real DOM while Reconciliation is an algorithm that compares Virtual DOM snapshot with the old DOM to update the real DOM efficiently.
+
+- Reconciliation minimizes costly DOM operations.
+- Gives smooth UI & updates feel instantaneous.
+- Complex diffing can slow down a lot of large scale applications.
+
+### 👉 JSX
+JavaScript XML/ JSX is a syntax extension for JavaScript, primarily used with React to describe UI components.
+
+_Till now we've seperately been using HTML, CSS, JS_
+
+Through JSX we can write HTML like code in JavaScript, which later on will be transformed into JavaScript code by React library.
+
+* JSX & React are different. We can write React without JSX.
+
+*React.createElement => Object => HTMLElement(render)*
+```
+const Heading = React.createElement ("h1", {id: "heading"}, "This is React")
+```
+
+*JSX - HTML like/ XML like syntax*
+```
+const jsxHeading = <h1 id="heading"> This is React </h1>;
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(heading);
+```

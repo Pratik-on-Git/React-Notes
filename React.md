@@ -648,5 +648,25 @@ It’s a tool that comes bundled with NPM (v5.2.0 and above), used to execute No
 
 Reason we don't push automatically created files like `node_modules/parcel-cache/dist` to the `git` as all the commands that we run like `npx/npm`, we're running them in `server`. Hence the server will be automatically creating the deleted files once again which will be similar to the previously generated local files in our code editor.
 
+### 👨‍💻 JSON (JavaScript Object Notation) 
+A lightweight data interchange format that's easy for humans to read and write, and easy for machines to parse and generate.
 
+🔹 JSON Structure Basics:
+* Data is in key-value pairs
+* Data is separated by commas
+* Curly braces {} hold objects
+* Square brackets [] hold arrays
 
+### 🌟 Code Moduling
+Breaking the whole codebase into small & reusable code modules.
+
+There are two types of moduling setups - 
+* Commonjs
+* ES6 Moduling
+
+Now inside `package.json` → we find `"scripts"` where we see `"dev" : "vite"`
+
+* *From this section we get the command* `npm run dev`.
+* We can also use `npx vite` to run our localhost.
+
+`npx` is used to execute Node.js packages directly from the terminal, without needing to install them globally.

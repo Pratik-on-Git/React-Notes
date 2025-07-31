@@ -440,6 +440,7 @@ Transpiler|	Converts modern JS to older syntax (e.g., Babel)
 Dependencies are external packages/libraries that your project relies on to function properly. 
 
 <u>Types of Dependencies</u>
+
 1. **Regular Dependencies (dependencies)**
 Packages required for your application to run in production
 - Installed with `npm install <package>`
@@ -471,4 +472,181 @@ Example: json
 - `*`: Latest version (not recommended)
 
 Example: `npm install -D parcel` [Dev dependency installed of parcel bundler]
+
+### 🤖 Installing React Boilerplate through `Vite` Npm
+1. `Installing gitbash`
+2. `npm create vite@latest`
+3. Need to install the following packages:
+`create-vite@6.5.0
+Ok to proceed? (y) Y`
+```
+> npx
+> create-vite
+
+│
+◇  Project name:
+│  Pratik-Portfolio
+│
+◇  Package name:
+│  pratik-portfolio
+│
+◇  Select a framework:
+│  React
+│
+◇  Select a variant:
+│  JavaScript
+│
+◇  Scaffolding project in C:\A Storage\02. Front End Tech\LiveCohort\Pratik-Portfolio...
+│
+└  Done. 
+```
+**Now we need to install NPM. I've boilerplate installed but I need to code that'll be used in boilerplate :**
+```
+Now run:
+
+  cd Pratik-Portfolio
+  npm install
+  npm run dev
+
+PS C:\A Storage\02. Front End Tech\LiveCohort> cd Pratik-Portfolio
+>>   npm install
+>>   npm run dev
+
+added 152 packages, and audited 153 packages in 47s
+
+33 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+> pratik-portfolio@0.0.0 dev
+> vite
+```
+
+**Upon Each Command on Terminal :** 
+
+* `npm install` -> will go to `src/package.json` [Registry File] 
+* this file will consist of **dependencies & dev-dependencies** 
+* These two files will check what are the things inside them. It'll install the related code from there.
+* After running the `npm install` we'll get new files `node_modules` inside main file.
+
+Inside `package.json` file there will be info about your library/packages which are installed inside `node_modules`.
+
+Now to run our project: `npm run dev`
+
+### 👨‍💻 `package-lock.json`
+The Dependency Version Lockfile. Keeps the record of every version of the dependencies/packages that are getting installed (including nested sub-dependencies).
+
+### ➡️ Intergrity 
+
+It's an unique fingerprint (checksum) of the package’s contents. Generated using SHA-512 (common) or SHA-1 (older). 
+
+Integrity hash ensures that the package installed on your machine is bit-for-bit identical to the one deployed in production (or used by your teammates). 
+
+Format : json
+```
+"integrity": "sha512-9a1b2c3d4e5f6...=="
+```
+- `sha512`: Hashing algorithm
+- `9a1b2c3d...`: The actual hash digest.
+
+### 📝 Transitive Dependencies
+
+When your project depends on `vite`, and `vite` itself depends on other packages (which may depend on even more packages), this creates a chain called **transitive dependencies (or dependency tree)**.
+
+🌳 **Dependency Tree Example**
+```
+your-project  
+└── parcel@2.9.3 (direct dependency)  
+    ├── @parcel/core@2.9.3  
+    │   ├── @parcel/fs@2.9.3  
+    │   └── @parcel/utils@2.9.3  
+    └── postcss@8.4.21  
+        └── nanoid@3.3.6 (transitive dependency)  
+```
+* Every packages have it's own dependency hence for that there'll be seperate 'package.json' files inside it's folder in `node_modules`.
+* Every package in `node_modules` has its own `package.json`, defining its dependencies, scripts, and metadata.
+
+✅ Every package manages its own dependencies (via its `package.json`).
+
+✅ `node_modules` can be nested or flat (depends on npm/yarn/pnpm).
+
+✅ Conflicts occur if two packages need incompatible versions of the same dependency.
+
+✅ Use `npm ls <package>` to see where a dependency is installed.
+
+We don't push all of our code in the production/github. We'll put some of the code into `.gitignore`. 
+
+* If there's not a file we should create it & inside the file type `\node_modules`
+* If we've a `package.json` & `package-lock.json` file (outside) we can recreate `node_modules` again. (prompt: `npm install`) That's why it's not important to push `node_modules` inside github.
+
+* Files like `node_modules/` are recreated when you `run npm install` or `yarn install`.
+* Since these files are recreated identically on any machine (or server), storing them in `Git` is redundant.
+
+
+### Configure Browsers List 
+`browserslist` configuration, typically found in `package.json` or a `.browserslistrc` file.
+
+- json
+```
+"browserslist": [
+    "last 2 versions"]
+```
+### ❓Questions
+**Q: Why should I not modify `package-lock.json`?**
+
+A: It is a generated file and is not designed to be manually edited. Its purpose is to track the entire tree of dependencies (including dependencies of dependencies) and the exact version of each dependency. You should commit `package-lock.json` to your code repository
+
+You should avoid updating the `package.json` manually since it could break the synchronization between `package.json` and `package-lock. json`.
+
+**Q: What is `node_modules`? Is it a good idea to push that on git?**
+
+A: The `node_modules` folder contains generated code. This is not code you've written and you should never make any updates to the files inside Node modules because there's a pretty good chance they'll get overwritten next time you install some modules.
+
+It is better to not commit the `node_modules` folder, and instead add it to your `.gitignore` file.
+
+Here are all the reasons why you shouldn't commit it: The node_modules folder has a massive size (up to Gigabytes). It is easy to recreate the node_modules folder via packages. json
+
+**Q: What is the `dist` folder?**
+
+A: The `/dist` stands for distributable. The /dist folder contains the minimized version of the source code. The code present in the /dist folder is actually the code which is used on production web applications.
+
+Parcel's default directory for your output is named dist . The --dist-dir public tag defines the output folder for your production files and is named public to avoid confusion with the dist default directory.
+
+**Q: What is `browserlists`?**
+
+A: Browserslist defines and shares the list of target browsers between various frontend build tools.
+
+### 👉 How to create an NPM Script?
+> NPM Scripts are needed to build our project. We'll be creating the script in our `package.json` file.
+
+- We can use these scripts for multiple works. (e.g Start our project in Dev Mode, production ready application)
+
+**let's create a script for starting our project in Dev Mode.**
+inside `package.json`
+```
+"scripts": {
+    "test": "jest",
+    "start": "parcel index.html"}
+```
+This script will be used for dev build : `"start": "parcel index.html"`
+
+To run these scripts : `npm run <script_name>` [`npm run start`]
+
+### 🩵 What is `npx`?
+`npx` stands for Node Package Executer.
+
+It’s a tool that comes bundled with NPM (v5.2.0 and above), used to execute Node packages directly without installing them globally.
+
+🔧 Why Use npx?
+* Run packages without global install
+* Avoid cluttering your system with global packages
+* Always runs the latest version
+* Great for running CLI tools once or temporarily
+
+### 📚 Why we don't push automatically created files like `node_modules/parcel-cache/dist` to the `git`?
+
+Reason we don't push automatically created files like `node_modules/parcel-cache/dist` to the `git` as all the commands that we run like `npx/npm`, we're running them in `server`. Hence the server will be automatically creating the deleted files once again which will be similar to the previously generated local files in our code editor.
+
+
 

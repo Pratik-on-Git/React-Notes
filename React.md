@@ -670,3 +670,74 @@ Now inside `package.json` → we find `"scripts"` where we see `"dev" : "vite"`
 * We can also use `npx vite` to run our localhost.
 
 `npx` is used to execute Node.js packages directly from the terminal, without needing to install them globally.
+
+### 👉 Import & Export
+
+| abc.jsx | xyz.jsx |
+| :-------------: |:-------------:|
+| `let a = 5` | I want to use `a` from abc.jsx|
+|| We need to make it export ready to send to xyz.jsx|
+|`export default a`|`import a from abc.jsx` [Path]|
+|**We can use `default export` once in a file.**|Now `a+5=10`|
+||while we import we can change the name of the variable.|
+||`import b from abc.jsx` [b=5]|
+|We can use multiple `export const` in a single file.||
+
+| x.jsx |actions| y.jsx |
+|:-------------:|:-------------:|:-------------:|
+|`a=5, b=6, c=7`|Import|`import {e,f,g} from x.jsx`|
+|export const e=a|Export||
+|export const f=b|||
+|export const g=c|||
+
+**At the times of `import` we've to import the `export const` in a curly bracket {} & the name of the variables must be same.**
+
+### 👉 Folder Updatation
+* `public` folder's files will be accessed globally. 
+* We need to delete `assets`, `app.css`, `index.css` files.
+* Delete all codes from `app.jsx`.
+* Delete `import './index.html'` from `main.jsx`.
+* Put `rafce` (ReactArrowFunctionComponentExport) [in app.jsx]
+
+```
+const App() => {
+    return <div>Application</div>
+}
+export default app;
+```
+
+Imports will be done in `main.jsx`
+```
+import Abc from "app.jsx"
+```
+We can change the name to something else but the file that we default exported remians same.
+```
+import {x} from "./App.jsx"
+```
+
+**Important VS Code Extension :** ES7 + React/Redux/React-Native...
+
+### 🌟 Inside `main.jsx`
+```
+createRoot(document.getElementById("root").render(
+  <StrictMode>
+    <App/> -> Whatever we've written in app.jsx
+  </StrictMode>
+))
+```
+`createRoot(document.getElementById("root")).render(<App />)`
+* `createRoot` - Lets you create a root to display React components inside a browser DOM mode.
+* `document.getElementById("root")` - Selects the div id `root` from HTML.
+* `.render(<App />)` - This self closing tag renders the React functional components of `App.jsx` inside root. 
+
+`<App />` is an XML creates user defined tags. 
+
+### ➡️ Inside `App.jsx`
+```
+const App = () => {
+  return <div>App</div>
+}
+export default App;
+```
+* As you can see we've passed an annoymous arrow function which is passed in `const App`.
+* Through `export default` now the function component is ready to get rendered inside `root`.   

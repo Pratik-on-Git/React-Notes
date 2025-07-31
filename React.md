@@ -352,3 +352,123 @@ const element = <Welcome name="John Doe" />;
 **Converts newer JS syntax into older syntax that can run in older browsers. (Different developers writting different versions of JavaScript, henceforth Babel is used)**
 
 _Example: Arrow functions () => {} → function() {}_
+
+### ✅ Installing React Boilerplate through `npm`
+**What's NPM?**
+
+NPM is a Node Package Manager. It's the default package manager for the Node.js runtime environment. `npm` dosen't have a full form. Here's a quick overview:
+
+🔹 NPM is a tool to manage JavaScript packages/libraries.
+* Used to install, share, and version-control packages.
+* Comes pre-installed with Node.js.
+* It's a package manager but it's abbreviation is not node package manager.
+ 
+It comes bundled with Node.js and is the default tool for managing dependencies in JavaScript/Node.js projects.
+
+* World's largest software registry and package manager for JavaScript. A standard repository for all the packages.
+
+### `npm` Commands Cheat Sheet
+
+Essential npm commands for JavaScript/React development.
+
+**📦 Package Installation**
+
+| Command | Description |
+|---------|-------------|
+| `npm install` | Install all dependencies from `package.json` |
+| `npm install <package>` | Install a specific package (e.g., `npm install react`) |
+| `npm install <package> --save-dev` | Install as dev dependency |
+| `npm install -g <package>` | Install globally |
+| `npm install <package>@<version>` | Install specific version |
+
+**🚀 Development & Scripts**
+
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start development server |
+| `npm run build` | Create production build |
+| `npm test` | Run tests |
+| `npm run <script>` | Run custom script |
+| `npm run dev` | Start dev mode (Vite/Next.js) |
+
+**🛠️ Project Setup**
+
+| Command | Description |
+|---------|-------------|
+| `npm init` | Create new `package.json` |
+| `npm init -y` | Quick init with defaults |
+| `npm init <initializer>` | Scaffold project (e.g., `npm create vite@latest`) |
+
+* npm uses `package.json` & `node_modules`
+* All the configuration will be inside `package.json` file for the project which is a configuration for `npm`.
+* Our projects are dependent on a lot of packages. These packages are called dependencies to the project. `npm` manages these packages.
+
+
+### 🌟 Bundler
+A bundler helps you to clean your code prior sending to production. It bundles/packs your app so it can be sent to production.
+
+Example : _webpack,vite,parcel etc._
+-> `create-React-app` uses babel & webpack.
+
+🔹 **Why Do We Need Bundlers?**
+* Dependency Management: It combines imported modules into a single file. 
+* Resolves `import`/`require` statements.
+* Code Optimization: Minifies, compresses, and tree-shakes (removes unused code).
+* Improves load time.
+* Supports TypeScript, SCSS, and modern JS (ES6+).
+
+🔹 **Bundler vs. Compiler vs. Transpiler**
+|Tool|	Purpose|
+|:---:|:-------:|
+Bundler|	Combines files, manages dependencies
+Compiler|	Converts code to machine code (e.g., TypeScript → JS)
+Transpiler|	Converts modern JS to older syntax (e.g., Babel)
+
+🔹 **When to Use a Bundler?**
+* SPAs (React, Vue, Angular)
+* Libraries (Publishing to npm)
+* Legacy Browser Support (via polyfills)
+
+🔹 **Popular JavaScript Bundlers**
+|Bundler	|Key Features	|Used With|
+|:--:|:---:|:----:|
+|Webpack	|Highly configurable, plugin system	|React, Vue, Angular|
+|Vite	|Ultra-fast (ESM + Rollup), HMR	|Next.js, Svelte|
+|Parcel	|Zero-config, fast builds	|Small to medium apps|
+
+### 📚 Dependencies
+Dependencies are external packages/libraries that your project relies on to function properly. 
+
+<u>Types of Dependencies</u>
+1. **Regular Dependencies (dependencies)**
+Packages required for your application to run in production
+- Installed with `npm install <package>`
+- Listed in `package.json` under `dependencies`
+
+Example: json
+```
+"dependencies": {
+  "react": "^18.2.0",
+  "express": "^4.18.2"}
+```
+2. **Development Dependencies (devDependencies)**
+Packages only needed during development (testing, building, etc.)
+- Installed with `npm install <package> --save-dev`
+- Not included in production builds
+
+Example: json
+```
+"devDependencies": {
+  "jest": "^29.5.0",
+  "webpack": "^5.76.0"}
+```
+
+**npm uses Semantic Versioning (SemVer):**
+
+- `^1.2.3`: [Caret] Allow patch and minor updates (1.x.x) [Safe]
+- `~1.2.3`: [Tilde] Allow only patch updates (1.2.x)
+- `1.2.3`: Exact version
+- `*`: Latest version (not recommended)
+
+Example: `npm install -D parcel` [Dev dependency installed of parcel bundler]
+

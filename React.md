@@ -741,3 +741,187 @@ export default App;
 ```
 * As you can see we've passed an annoymous arrow function which is passed in `const App`.
 * Through `export default` now the function component is ready to get rendered inside `root`.   
+
+### ✅ CommonJS vs ES6 Modules 
+| Feature    | CommonJS                                 | ES6 Modules                   |
+| ---------- | ---------------------------------------- | ----------------------------- |
+| Syntax     | `require()` / `module.exports`           | `import` / `export`           |
+| Usage      | Node.js (pre-ES modules)                 | Modern JS (browser + Node.js) |
+| TypeScript | Supported, but with compatibility quirks | Native support preferred      |
+
+### 🌟 Using CommonJS for Type Moduling
+```
+const dummyUser = {
+  id: 1,
+  name: "Pratik",
+  email: "pratik@example.com"
+};
+
+module.exports = { dummyUser };
+```
+```
+// Import using CommonJS
+const { dummyUser } = require('../types/user');
+
+/**
+ * @param {import('../types/user').User} user
+ */
+function showUser(user) {
+  console.log(`Hello, ${user.name}`);
+}
+
+showUser(dummyUser);
+```
+### 📊 CommonJS Export & Import Syntax Comparison Chart
+| Feature            | CommonJS Syntax                                                          | ES6 Module Syntax                      | Notes                                   |
+| ------------------ | ------------------------------------------------------------------------ | -------------------------------------- | --------------------------------------- |
+| **Default Export** | `module.exports = myFunction;`                                           | `export default myFunction;`           | You export one main value/function      |
+| **Import Default** | `const myFunction = require('./file');`                                  | `import myFunction from './file.js';`  | `require()` grabs the whole export      |
+| **Named Export**   | `exports.myFunc = myFunction;`<br>*or*<br>`module.exports = { myFunc };` | `export const myFunc = () => {}`       | Exports as properties of an object      |
+| **Import Named**   | `const { myFunc } = require('./file');`                                  | `import { myFunc } from './file.js';`  | Destructure the returned object         |
+| **Both (Mix)**     | ❌ Not recommended in CommonJS                                            | ✅ Allowed (`export default` + `named`) | CommonJS doesn't cleanly support mixing |
+
+**Default Export (CommonJS)**
+
+*file: greet.js*
+```
+function greet(name) {
+  return `Hello, ${name}`;
+}
+
+module.exports = greet; // 👈 Default export
+```
+*file: app.js*
+```
+const greet = require('./greet'); // 👈 Default import
+console.log(greet('Pratik'));
+```
+
+**Named Exports (CommonJS)**
+
+*file: math.js*
+```
+const add = (a, b) => a + b;
+const sub = (a, b) => a - b;
+
+// Option 1
+exports.add = add;
+exports.sub = sub;
+
+// OR Option 2 (preferred for cleaner syntax)
+module.exports = { add, sub };
+```
+*file: app.js*
+```
+const { add, sub } = require('./math');
+console.log(add(2, 3)); // 5
+```
+### 👉 React Functional Components
+Everything in a React is a **Component.** Breaking the whole codebase in smaller pieces of code.
+
+**Class Based Component** (Old Way) 
+
+**Functional Component** (New Way): 
+Functional components are the modern way to write React components using JavaScript functions (often with arrow functions). 
+
+_A JavaScript Function which returns a React Element is called Functional Element. It will always return HTML._
+
+```
+const HeadingComp = () => {
+  <div id="container">
+    return <h1 className="heading">Pratik Das It's Calling</h1>
+  </div>}
+```
+
+**React Element Rendering** & **React Component Rendering** are not same.
+- React Component rendering : `root.render(<HeadingComponent />)`
+- React Element rendering : `root.render(parent)`
+
+Now, suppose there are two **Function components** like this:
+```
+const HeadingComp = () => 
+  <div id="container">
+    <h1 className="heading">Pratik Das It's Calling</h1>
+  </div>
+  
+  const HeadingComp2 = () => 
+  <div id="container">
+    **<HeadingComp/>**
+    <h1 className="heading">Pratik Das It's Him</h1>
+  </div>
+```
+If I want to now render my `HeadingComp` component inside `HeadingComp2` container I need to add `<HeadingComp/>` inside the container.
+
+All the code of `HeadingComp` will come to `HeadingComp2` & will render in HTML if we use `<HeadingComp/>`
+
+### 🌟 Component Composition 
+Basically composing two components inside one another. A fundamental React pattern through which we'll build complex UIs by combining smaller, reusable components.
+
+If I use any direct function I've to use `return`.
+```
+const HeadingComp2 = function() { 
+  return(
+  <div id="container">
+    <h1 className="heading">Pratik Das It's Him</h1>
+  </div>)}
+```
+
+If I had to put a React element inside React component/use normal JS code inside a React Component I can write it like this.
+```
+const num = 10000
+
+const HeadingComp = () => 
+  <div id="container">
+    {ANY JAVASCRIPT CODE}**********
+    <h1>{num}</h1>
+    <h1 className="heading">Pratik Das It's Calling</h1>
+  </div>
+```
+
+✅ Any Code Written after `return` won't work. The code will be unreachable. 
+Example: 
+```
+const App = () => {
+  return <div> Pratik </div>
+  console.log ("Hello World")     // will give us an error
+}
+```
+
+✅ We can only return single data/entity/variable/value.
+```
+const App = () => {
+  return <div> Pratik </div> <div> Pratik </div> <div> Pratik </div>
+  // will give us an error
+}
+```
+Instead we can make a parent div & put all of the the divs inside it. But this div has no function except wrapping up the divs.
+```
+const App = () => {
+    return <div>
+              <div>App</div>
+              <div>School</div>
+          </div>;
+}
+```
+### ➡️ Fragment Tag
+To improve the issue of wrapping up the divs inside one main div, we can wrap these divs using the `<Fragment></Fragment>` tag from React. This tag doesn’t appear in the Chrome Elements panel — only the `root` element will be visible, along with the `App` and `School` divs.
+
+```
+const App = () => {
+    return <Fragment>
+              <div>App</div>
+              <div>School</div>
+          </Fragment>;
+}
+```
+Now this Fragment tag can be written in this way also. We call it empty tags also -
+```
+const App = () => {
+    return <>
+              <div>App</div>
+              <div>School</div>
+          </>;
+}
+```
+✅ **A function should have a single return statement, and it must be the last statement in the function.**
+

@@ -436,41 +436,6 @@ Transpiler|	Converts modern JS to older syntax (e.g., Babel)
 |Vite	|Ultra-fast (ESM + Rollup), HMR	|Next.js, Svelte|
 |Parcel	|Zero-config, fast builds	|Small to medium apps|
 
-### 📚 Dependencies
-Dependencies are external packages/libraries that your project relies on to function properly. 
-
-<u>Types of Dependencies</u>
-
-1. **Regular Dependencies (dependencies)**
-Packages required for your application to run in production
-- Installed with `npm install <package>`
-- Listed in `package.json` under `dependencies`
-
-Example: json
-```
-"dependencies": {
-  "react": "^18.2.0",
-  "express": "^4.18.2"}
-```
-2. **Development Dependencies (devDependencies)**
-Packages only needed during development (testing, building, etc.)
-- Installed with `npm install <package> --save-dev`
-- Not included in production builds
-
-Example: json
-```
-"devDependencies": {
-  "jest": "^29.5.0",
-  "webpack": "^5.76.0"}
-```
-
-**npm uses Semantic Versioning (SemVer):**
-
-- `^1.2.3`: [Caret] Allow patch and minor updates (1.x.x) [Safe]
-- `~1.2.3`: [Tilde] Allow only patch updates (1.2.x)
-- `1.2.3`: Exact version
-- `*`: Latest version (not recommended)
-
 Example: `npm install -D parcel` [Dev dependency installed of parcel bundler]
 
 ### 🤖 Installing React Boilerplate through `Vite` Npm
@@ -534,10 +499,150 @@ Inside `package.json` file there will be info about your library/packages which 
 
 Now to run our project: `npm run dev`
 
+### 👨‍💻 `package.json`
+
+* It stores all the metadata regarding the project we're working on.
+```
+"name": "/* project name  */"
+"type": " module/commonjs "             /*  ES6/CommonJS  */
+
+"scripts" : {               /*  We can chnage & edit these scripts  */
+  "dev": "vite",           [npm run `dev`] → runs the command vite → vite runs the algo that starts local server
+  "build": "vite build"   [npm run `build`] → build project
+}
+```
+
+✅ Frontend Tool `vite` also provides us a JS package alongside & if we want to execute a package in my terminal ➡️ `npx vite` ➡️ Localhost starts
+
+### 🌟 Code Moduling
+Breaking the whole codebase into small & reusable code modules.
+
+There are two types of moduling setups - 
+* Commonjs
+* ES6 Moduling
+
+Now inside `package.json` → we find `"scripts"` where we see `"dev" : "vite"`
+
+* *From this section we get the command* `npm run dev`.
+* We can also use `npx vite` to run our localhost.
+
+`npx` is used to execute Node.js packages directly from the terminal, without needing to install them globally.
+
+### ✅ CommonJS vs ES6 Modules 
+| Feature    | CommonJS                                 | ES6 Modules                   |
+| ---------- | ---------------------------------------- | ----------------------------- |
+| Syntax     | `require()` / `module.exports`           | `import` / `export`           |
+| Usage      | Node.js (pre-ES modules)                 | Modern JS (browser + Node.js) |
+| TypeScript | Supported, but with compatibility quirks | Native support preferred      |
+
+### 🌟 Using CommonJS for Type Moduling
+```
+const dummyUser = {
+  id: 1,
+  name: "Pratik",
+  email: "pratik@example.com"
+};
+
+module.exports = { dummyUser };
+```
+```
+// Import using CommonJS
+const { dummyUser } = require('../types/user');
+
+/**
+ * @param {import('../types/user').User} user
+ */
+function showUser(user) {
+  console.log(`Hello, ${user.name}`);
+}
+
+showUser(dummyUser);
+```
+### 📊 CommonJS Export & Import Syntax Comparison Chart
+| Feature            | CommonJS Syntax                                                          | ES6 Module Syntax                      | Notes                                   |
+| ------------------ | ------------------------------------------------------------------------ | -------------------------------------- | --------------------------------------- |
+| **Default Export** | `module.exports = myFunction;`                                           | `export default myFunction;`           | You export one main value/function      |
+| **Import Default** | `const myFunction = require('./file');`                                  | `import myFunction from './file.js';`  | `require()` grabs the whole export      |
+| **Named Export**   | `exports.myFunc = myFunction;`<br>*or*<br>`module.exports = { myFunc };` | `export const myFunc = () => {}`       | Exports as properties of an object      |
+| **Import Named**   | `const { myFunc } = require('./file');`                                  | `import { myFunc } from './file.js';`  | Destructure the returned object         |
+| **Both (Mix)**     | ❌ Not recommended in CommonJS                                            | ✅ Allowed (`export default` + `named`) | CommonJS doesn't cleanly support mixing |
+
+**Default Export (CommonJS)**
+
+*file: greet.js*
+```
+function greet(name) {
+  return `Hello, ${name}`;
+}
+
+module.exports = greet; // 👈 Default export
+```
+*file: app.js*
+```
+const greet = require('./greet'); // 👈 Default import
+console.log(greet('Pratik'));
+```
+
+**Named Exports (CommonJS)**
+
+*file: math.js*
+```
+const add = (a, b) => a + b;
+const sub = (a, b) => a - b;
+
+// Option 1
+exports.add = add;
+exports.sub = sub;
+
+// OR Option 2 (preferred for cleaner syntax)
+module.exports = { add, sub };
+```
+*file: app.js*
+```
+const { add, sub } = require('./math');
+console.log(add(2, 3)); // 5
+```
+### 📚 Dependencies
+Dependencies are external packages/libraries that your project relies on to function properly. 
+
+<u>Types of Dependencies</u>
+
+1. **Regular Dependencies (dependencies)**
+Packages required for your application to run in production
+- Installed with `npm install <package>`
+- Listed in `package.json` under `dependencies`
+
+Example: json
+```
+"dependencies": {
+  "react": "^18.2.0",
+  "express": "^4.18.2"}
+```
+2. **Development Dependencies (devDependencies)**
+Packages only needed during development (testing, building, etc.)
+- Installed with `npm install <package> --save-dev`
+- Not neede while production
+- Not included in production builds
+
+Example: json
+```
+"devDependencies": {
+  "jest": "^29.5.0",
+  "webpack": "^5.76.0"}
+```
+
+**npm uses Semantic Versioning (SemVer):**
+
+- `^1.2.3`: [Caret] Allow patch and minor updates (1.x.x) [Safe]
+- `~1.2.3`: [Tilde] Allow only patch updates (1.2.x)
+- `1.2.3`: Exact version
+- `*`: Latest version (not recommended)
+
 ### 👨‍💻 `package-lock.json`
 The Dependency Version Lockfile. Keeps the record of every version of the dependencies/packages that are getting installed (including nested sub-dependencies).
 
 ### ➡️ Intergrity 
+Inside `package-lock.json` if we search "node_modules/react" we'll see an `"integrity"` key.
 
 It's an unique fingerprint (checksum) of the package’s contents. Generated using SHA-512 (common) or SHA-1 (older). 
 
@@ -657,19 +762,7 @@ A lightweight data interchange format that's easy for humans to read and write, 
 * Curly braces {} hold objects
 * Square brackets [] hold arrays
 
-### 🌟 Code Moduling
-Breaking the whole codebase into small & reusable code modules.
 
-There are two types of moduling setups - 
-* Commonjs
-* ES6 Moduling
-
-Now inside `package.json` → we find `"scripts"` where we see `"dev" : "vite"`
-
-* *From this section we get the command* `npm run dev`.
-* We can also use `npx vite` to run our localhost.
-
-`npx` is used to execute Node.js packages directly from the terminal, without needing to install them globally.
 
 ### 👉 Import & Export
 
@@ -742,80 +835,7 @@ export default App;
 * As you can see we've passed an annoymous arrow function which is passed in `const App`.
 * Through `export default` now the function component is ready to get rendered inside `root`.   
 
-### ✅ CommonJS vs ES6 Modules 
-| Feature    | CommonJS                                 | ES6 Modules                   |
-| ---------- | ---------------------------------------- | ----------------------------- |
-| Syntax     | `require()` / `module.exports`           | `import` / `export`           |
-| Usage      | Node.js (pre-ES modules)                 | Modern JS (browser + Node.js) |
-| TypeScript | Supported, but with compatibility quirks | Native support preferred      |
 
-### 🌟 Using CommonJS for Type Moduling
-```
-const dummyUser = {
-  id: 1,
-  name: "Pratik",
-  email: "pratik@example.com"
-};
-
-module.exports = { dummyUser };
-```
-```
-// Import using CommonJS
-const { dummyUser } = require('../types/user');
-
-/**
- * @param {import('../types/user').User} user
- */
-function showUser(user) {
-  console.log(`Hello, ${user.name}`);
-}
-
-showUser(dummyUser);
-```
-### 📊 CommonJS Export & Import Syntax Comparison Chart
-| Feature            | CommonJS Syntax                                                          | ES6 Module Syntax                      | Notes                                   |
-| ------------------ | ------------------------------------------------------------------------ | -------------------------------------- | --------------------------------------- |
-| **Default Export** | `module.exports = myFunction;`                                           | `export default myFunction;`           | You export one main value/function      |
-| **Import Default** | `const myFunction = require('./file');`                                  | `import myFunction from './file.js';`  | `require()` grabs the whole export      |
-| **Named Export**   | `exports.myFunc = myFunction;`<br>*or*<br>`module.exports = { myFunc };` | `export const myFunc = () => {}`       | Exports as properties of an object      |
-| **Import Named**   | `const { myFunc } = require('./file');`                                  | `import { myFunc } from './file.js';`  | Destructure the returned object         |
-| **Both (Mix)**     | ❌ Not recommended in CommonJS                                            | ✅ Allowed (`export default` + `named`) | CommonJS doesn't cleanly support mixing |
-
-**Default Export (CommonJS)**
-
-*file: greet.js*
-```
-function greet(name) {
-  return `Hello, ${name}`;
-}
-
-module.exports = greet; // 👈 Default export
-```
-*file: app.js*
-```
-const greet = require('./greet'); // 👈 Default import
-console.log(greet('Pratik'));
-```
-
-**Named Exports (CommonJS)**
-
-*file: math.js*
-```
-const add = (a, b) => a + b;
-const sub = (a, b) => a - b;
-
-// Option 1
-exports.add = add;
-exports.sub = sub;
-
-// OR Option 2 (preferred for cleaner syntax)
-module.exports = { add, sub };
-```
-*file: app.js*
-```
-const { add, sub } = require('./math');
-console.log(add(2, 3)); // 5
-```
 ### 👉 React Functional Components
 Everything in a React is a **Component.** Breaking the whole codebase in smaller pieces of code.
 
@@ -903,7 +923,7 @@ const App = () => {
           </div>;
 }
 ```
-### ➡️ Fragment Tag
+### ➡️ React Fragment Tag
 To improve the issue of wrapping up the divs inside one main div, we can wrap these divs using the `<Fragment></Fragment>` tag from React. This tag doesn’t appear in the Chrome Elements panel — only the `root` element will be visible, along with the `App` and `School` divs.
 
 ```
@@ -925,3 +945,146 @@ const App = () => {
 ```
 ✅ **A function should have a single return statement, and it must be the last statement in the function.**
 
+### 🤖 More JSX
+If we want to describe or return our component in multiple lines, we use parentheses () to wrap the JSX.
+```
+const MyComponent = () => (
+  <div>
+    <h1>Hello</h1>
+    <p>This is a multi-line component.</p>
+  </div>
+);
+```
+### 👉 Props
+In React, props (short for "properties") are a fundamental concept for passing data between components. 
+
+**What are Props?**
+
+Read-only data passed from parent to child components. Similar to function arguments in JavaScript. Enable component reusability with dynamic data
+
+*childern + attribute that we pass*
+
+🎯 **Goal**
+You have a `button`, and instead of hardcoding its text or style every time, you want to reuse it with different:
+* text (e.g., "Buy Now", "Add to Cart", "Learn More")
+* colors
+* `onClick` actions
+
+**Example**
+➡️ Reusable Button Component (Button.js)
+```
+function Button(props){    // Object
+  return(
+    <button
+      onClick={props.onClick}  
+      style={{
+        backgroundColor: props.bgColor,
+        border: "none", 
+        borderRadius: "5px",
+        color: props.textColor
+      }}
+    >
+    {props.label}
+    </button>
+  )
+}
+
+export default Button;
+```
+🌟 Using the Button Component:
+```
+import Button from './Button';
+
+function App() {
+  const handleClick = () => {
+    alert("Button clicked!")
+  }
+  
+  return (
+    <div>
+      <Button 
+        label="Buy Now" 
+        bgColor="#ff4757" 
+        textColor="#fff" 
+        onClick={handleClick} 
+      />
+
+      <Button 
+        label="Learn More" 
+        bgColor="#1e90ff" 
+        textColor="#fff" 
+        onClick={() => console.log("Learn More clicked")} 
+      />
+    </div>
+  );
+  }
+```
+*When you use a component in JSX, you pass props like this*
+```
+<Button label="Buy Now" bgColor="red" />
+```
+This is exactly like saying:
+```
+props = {
+  label: "Buy Now",
+  bgColor: "red"
+}
+```
+So each `key=value` becomes a property inside the props object.
+
+### ➡️ Event Listener & Event Handling in React
+Event handling in React is the process of responding to user interactions like:
+* Clicking a button 🖱️
+* Typing into an input field ⌨️
+* Submitting a form 📄
+* Hovering over an element 🖥️
+
+Instead of traditional addEventListener, React allows us to attach events directly in the JSX using camelCase syntax.
+```
+const App = () => {
+  const handleclick = () => {
+    alert ("Button Clicked!")
+  }
+
+    return (<>
+              <div>App</div>
+              <div>School</div>
+              <button onClick={handleClick}>Click Here</button>
+          </>);
+}
+```
+* The event is named onClick (camelCase), not onclick.
+* You pass a function reference `{handleClick}`, not a function call. 
+`{handleClick( )}`
+
+Now the previous example is for **Non-Parameterized function**. If the function is parameterized like this - 
+```
+const App = () =>{
+  const handleClick = (message) =>{
+    alert (message)
+  }
+}
+
+return (<>
+  <button 
+  onClick={handleClick("Kolkata")}
+  >
+    Click Here
+  </button>
+</>)
+```
+
+We must pass the argument when using a **parameterized function** in React, because React doesn't automatically know what argument to pass into your custom function.
+
+But in this case without user's interaction the parameterized function will run immediately.
+So instead we can add a wrapper handler function (fake function) so it doesn’t run immediately — it only runs when user interacts.
+```
+<button onClick={() => handleClick("Kolkata")}>Click (param)</button>
+```
+### ✅ The Container Presentation Pattern 
+
+In React it's is a design pattern that helps separate presentation logic from business (or container) logic, making components cleaner, reusable, and easier to test.
+
+In the Presenter Pattern, a component is split into:
+* Container (Smart) Component: Handles business logic, data fetching, and state.
+* Presenter (Dumb/UI) Component: Focuses only on rendering UI based on props.

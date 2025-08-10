@@ -1088,3 +1088,132 @@ In React it's is a design pattern that helps separate presentation logic from bu
 In the Presenter Pattern, a component is split into:
 * Container (Smart) Component: Handles business logic, data fetching, and state.
 * Presenter (Dumb/UI) Component: Focuses only on rendering UI based on props.
+
+## 🎮 Hangman Game
+* Add a New Folder named `components` inside `src/components`
+* Another folder inside that named Button → `src/components/Button`
+* Another file named `Button.jsx`
+* Component Function name should start with an uppercase letter.
+* Next we'll be defining a function named Button → 
+```
+const Button = () => {
+  return (
+    <button> 
+    </button>
+  );
+};
+
+export default Button;
+```
+* Now we want to put inputs in our component through parameters. `(props)`
+```
+const Button = (props) => {
+return (
+    <button>
+      {props.text}        // JSX Curlies {} → Evaluates Valid JS Expression 
+    </button>
+  );}
+```
+* After specifying the name of the props by destructuring -
+```
+const Button = ({ text }) => {
+  return (
+    <button>
+      {text}
+    </button>
+  );
+};
+```
+* Now we want to define how each of the button will work on clicking. We're also gonna evaluate the props that we're passing though `onClick={onClickHandler}`
+```
+const Button ({text, onClickHandler}){
+  return(
+    <>
+      <button
+      onClick={onClickHandler}
+      >
+        {text}
+      </button>
+    </>
+  )
+}
+```
+* in the `App.jsx` We'll pass `onClickHandler` & inside we'll call an annonymous function that'll return the event that'll get performed on clicking of the button.
+```
+return (
+    <>
+      <Button text="Click me" onClickHandler={() => console.log("Button clicked")}/>
+    </>
+  )
+```
+* Adding style after evaluation. First {} is to pass objects in style & second {} to evaluate 
+```
+    <button 
+    onClick={onClickHandler}
+    style={{
+      backgroundColor: 'blue',
+      color: 'white',
+      padding: '10px 20px',
+      border: 'none',
+      borderRadius: '5px',
+      cursor: 'pointer'
+    }}
+```
+* After TailwindCSS
+```
+<button 
+    onClick={onClickHandler}
+    className="bg-blue-500 text-white py-2 px-4 border-none rounded cursor-pointer"
+    >
+      {text}
+    </button>
+```
+* Now we need to make the button more reusable. So we'll be passing a props named `styleType` & default value is set to `primary`. We've also added a switch case function `getButtonStyling` where we're passing the `styleType` as props to check the colour of the button based on the value we give.
+
+✅ Using default parameter syntax means you don’t have to explicitly pass `primary` every time.
+
+Dynamic Styling with `getButtonStyling()`
+This function takes styletype and returns the appropriate Tailwind CSS class for that style.
+
+You’re switching over different styleType values like `primary`, `secondary`, `error`, etc.
+```
+const Button = ({ text, onClickHandler, styletype = "primary" }) => {
+  return (
+    <button 
+    onClick={onClickHandler}
+    className={`${getButtonStyling(styletype)} text-white py-2 px-4 border-none rounded cursor-pointer`}
+    >
+      {text}
+    </button>
+  );
+};
+
+function getButtonStyling(styletype) {
+  switch (styletype) {
+    case "primary":
+      return "bg-blue-500 text-white";
+    case "secondary":
+      return "bg-gray-500 text-white";
+    case "error":
+      return "bg-red-500 text-white";
+    case "success":
+      return "bg-green-500 text-white";
+    case "warning":
+      return "bg-yellow-500 text-white";
+    default:
+      return "bg-blue-500 text-white";
+  }
+}
+```
+* **Single Responsibility Principle :** In React, the Single Responsibility Principle (SRP) means that each component should have one clear job and handle only one reason to change.
+
+💡 Key Idea
+
+#### A React component should:
+
+Do one thing (render a part of the UI, handle a specific piece of logic, etc.).
+
+Change for one reason only (e.g., UI structure changes, not because of unrelated state changes).
+```
+Create a new file named `getButtonStyling.js` & add `function getButtonStyling(styletype)`
+```

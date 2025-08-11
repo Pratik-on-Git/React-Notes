@@ -1217,3 +1217,289 @@ Change for one reason only (e.g., UI structure changes, not because of unrelated
 ```
 Create a new file named `getButtonStyling.js` & add `function getButtonStyling(styletype)`
 ```
+* Now we'll make a dedicated folder named `pages`
+* We'll add the `StartGame.jsx` page.
+```
+const StartGame = () => {
+  return (
+    <div>
+      <h1>Welcome to Hangman!</h1>
+      <p>Get ready to guess the word!</p>
+    </div>
+  );
+};
+
+export default StartGame;
+```
+* Also will create another folder in components named `TextInput` & will add `TextInput.jsx`
+```
+const TextInput = ({ type ="text", label, onChangeHandler, placeholder = "Enter Your Input Here" }) => {
+  return (
+    <label>
+      <span className="text-gray-700">{label}</span>
+      <input
+        type={type}
+        className="border border-gray-500 px-4 py-2 rounded-md w-full"
+        onChange={onChangeHandler}
+        placeholder={placeholder}
+      />
+    </label>
+  );
+};
+
+export default TextInput;
+```
+* props are passed `type ="text"` [default value text], `label`, `onChangeHandler`, `placeholder = "Enter Your Input Here"` [default value]
+* Now we're gonna see the `App.jsx` structure where we'll be declaring all the values:
+```
+import TextInput from './components/TextInput/TextInput'
+import './App.css'
+import Button from './components/Button/Button'
+
+function App() {
+  return (
+    <>
+      <Button text="Click me" onClickHandler={() => console.log("Button clicked")} styletype='primary'/>
+      <Button text="Click me" onClickHandler={() => console.log("Warning clicked")} styletype="warning"/>
+      <Button text="Click me" onClickHandler={() => console.log("Error clicked")} styletype="error"/>
+      <Button text="Click me" onClickHandler={() => console.log("Success clicked")} styletype="success"/>
+
+      <TextInput label="Your Guess" onChangeHandler={(e) => console.log(e.target.value)} />
+    </>
+  )
+}
+export default App
+```
+* Now I Want - A password text field, A Show / Hide toggle button, A Submit button. I'll make a new folder inside component - `TextInputForm` & will create `TextInputForm.jsx`
+```
+import TextInput from "../TextInput/TextInput";
+import Button from "../Button/Button";
+
+const TextInputForm = () => {
+  return (
+    <form>
+        <div className="mb-4">
+          <TextInput 
+          label="Enter Your Word/Phrase Here"
+          placeholder="Your Word/Phrase"
+          onChangeHandler={(e) => console.log(e.target.value)} />
+        </div>
+
+        <div>
+            <Button 
+            styletype="warning"
+            text="Show/Hide" 
+            onClickHandler={() => console.log("Show/Hide clicked")} />
+        </div>
+
+        <div>
+            <Button 
+            type="submit" 
+            styleType="primary" 
+            text="Submit" 
+            onClickHandler={() => console.log("Form submitted")} />
+        </div>
+    </form>
+  );
+};
+```
+* Now to prevent the default behaviour of the whole form getting refreshed we'll add a function & pass that in Form.
+```
+const TextInputForm = () => {
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted");
+  };
+
+  return (
+    <form onSubmit={handleFormSubmit}>...)...}
+```
+* Also We'll add another props to target & fetch the input that we're putting inside the Input box
+```
+const handleTextInputChange = (e) => {
+    console.log("Text input changed:", e.target.value);
+  };
+
+  return (
+    <form onSubmit={handleFormSubmit}>
+        <div className="mb-4">
+          <TextInput 
+          label="Enter Your Word/Phrase Here"
+          placeholder="Your Word/Phrase"
+          onChangeHandler={handleTextInputChange} />
+        </div>...)
+```
+* Now our target is to seperate the Logical layer with the UI. We'll be shifting the `const TextInputForm` & `const handleTextInputChange` to a new file named `TextInputFormContainer.jsx`.
+
+Also we'll be passing these attributes as props.
+```
+import TextInputForm from "./TextInputForm";
+
+const TextInputFormContainer = () => {
+    const handleFormSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted");
+  };
+
+  const handleTextInputChange = (e) => {
+    console.log("Text input changed:", e.target.value);
+  };
+  return (
+    <div>
+      <TextInputForm 
+        handleFormSubmit={handleFormSubmit} 
+        handleTextInputChange={handleTextInputChange} 
+      />
+    </div>
+  );
+};
+```
+* Now we'll be changing the `Show/Hide` button on click & it'll be interacting & changing UI in Input Box.
+* Inside `TextInputForm.jsx` we'll be adding a props named `handleShowHideClick` 
+```
+  <div>
+    <Button 
+      styletype="warning"
+      text="Show/Hide" 
+      onClickHandler={handleShowHideClick} />
+  </div>
+```
+* Just like rest of the two functions we'll add another function in `TextInputFormContainer.jsx`
+```
+const handleShowHideClick = () => {
+    console.log("Show/Hide clicked");
+  };
+  
+  return (
+    <div>
+      <TextInputForm 
+        handleFormSubmit={handleFormSubmit} 
+        handleTextInputChange={handleTextInputChange} 
+        handleShowHideClick={handleShowHideClick} 
+      />
+    </div>
+  );
+```
+* Now we'll be passing a prop named `inputType` in `TextInputForm.jsx`. 
+```
+const TextInputForm = ({inputType, handleFormSubmit, handleTextInputChange, handleShowHideClick }) => {
+  return (
+    <form onSubmit={handleFormSubmit}>
+        <div className="mb-4">
+          <TextInput 
+          type={inputType}
+          label="Enter Your Word/Phrase Here"
+          placeholder="Your Word/Phrase"
+          onChangeHandler={handleTextInputChange} />
+        </div>...)...}
+```
+* While calling it through `TextInputFormContainer.jsx` we'll put the default value as `type ="text"`
+```
+return (
+    <div>
+      <TextInputForm 
+        inputType="text"
+        handleFormSubmit={handleFormSubmit} 
+        handleTextInputChange={handleTextInputChange} 
+        handleShowHideClick={handleShowHideClick} 
+      />
+    </div>
+  );
+```
+*  Now I'll make a variable named `inputType` & will assign the value `"passowrd"` to it. i'll also call that in `TextInputForm`. Alongside Will run a if else loop that'll toggle based on the current state.
+```
+const TextInputFormContainer = () => {
+
+    let inputType = "password";...
+    ...
+    const handleShowHideClick = () => {
+    console.log("Show/Hide clicked");
+    if (inputType === "password") {
+        inputType = "text";
+    } else {
+        inputType = "password";
+    }
+  };
+
+  return (
+    <div>
+      <TextInputForm 
+        inputType={inputType}
+        ...)}
+```
+If we write variables in this way in our components, React dosen't track the changes after interactions. It guesses that we're using these variables for our own usage.
+
+Also when I change variable React calls the whole function & inside that it again gets `let inputType = "password"`
+
+Now we'll be making a type of varibale that React will track. upon changes React will manage the memeory. We'll calling these `state variables`
+
+### 💡 React Hooks 
+Special functions introduced in React 16.8 that let you use state and other React features in functional components — without writing class components.
+
+**They essentially let functional components do things like:**
+* Store and update state (useState)
+* Perform side effects (useEffect)
+* Share logic across components (custom hooks)
+* Access React’s internal context and refs (useContext, useRef)
+
+#### ✅ Why Hooks?
+Before hooks, only class components could use lifecycle methods, state, and certain advanced features. Hooks solved:
+* Logic Reuse – Avoided "wrapper hell" with higher-order components (HOCs) or render props.
+* Cleaner Code – No need for verbose class syntax.
+* Better Separation of Concerns – Logic grouped by functionality instead of lifecycle methods.
+
+#### Commonly Used Hooks
+| Hook          | Purpose                                       | Example                                                       |
+| ------------- | --------------------------------------------- | ------------------------------------------------------------- |
+| `useState`    | Manage local component state                  | `const [count, setCount] = useState(0)`                       |
+| `useEffect`   | Run side effects (API calls, event listeners) | `useEffect(() => { document.title = count; }, [count])`       |
+| `useContext`  | Consume values from `React.createContext()`   | `const value = useContext(MyContext)`                         |
+| `useRef`      | Store mutable values, DOM references          | `const inputRef = useRef(null)`                               |
+| `useReducer`  | Manage complex state logic                    | `const [state, dispatch] = useReducer(reducer, initialState)` |
+| `useMemo`     | Memoize values for performance                | `const memoValue = useMemo(() => compute(a, b), [a, b])`      |
+| `useCallback` | Memoize functions to prevent re-renders       | `const fn = useCallback(() => doSomething(), [])`             |
+
+### 🌟 `useState` Hook
+`useState` hook in React lets functional components have their own state — something that was only possible in class components before hooks came along.
+**Syntax**
+```
+const [stateVariable, setStateFunction] = useState(initialValue);
+```
+* `stateVariable` → The current state value.
+* `setStateFunction` → Function to update the state.
+* `initialValue` → The starting value of your state (number, string, object, array, etc.).
+
+**Now we're gonnna use it in our current game to manage the variable changes.**
+
+```
+const TextInputFormContainer = () => {
+
+    const [inputType, setInputType] = useState("password");
+    
+    ...
+
+    const handleShowHideClick = () => {
+    console.log("Show/Hide clicked");
+    if (inputType === "password") {
+        setInputType("text");
+    } else {
+        setInputType("password");
+    }
+  };
+
+  ...}
+```
+
+`useState` hook returns an Array & we destructure it inside `const [inputType, setInputType]` → First Element is state variable & Second Element is updater function.
+
+* Also in `TextInputForm.jsx` we'll use this state to toggle button Among `Show` & `Hide`.
+```
+...
+<div>
+<Button 
+  styletype="warning"
+  text={inputType === "password" ? "Show" : "Hide"} 
+  onClickHandler={handleShowHideClick} />
+</div>
+...
+```

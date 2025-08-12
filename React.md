@@ -1503,3 +1503,110 @@ const TextInputFormContainer = () => {
 </div>
 ...
 ```
+* Now I want to collect the hidden data user 1 is typing in the box & want to send it to the next page upon clicking on submit. We'll use a state variable to achieve it.
+
+Whatever is written in input tag that'll be stored inside the `value` variable of `useState`.
+
+Inside `handleTextInputChange` function I'm getting all the changes that I'm doing in input tag. in `e.target.value` I'll get the changed/updated value.
+```
+const [value, setValue] = useState("");
+
+    const handleFormSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted:", value);
+  };
+
+  const handleTextInputChange = (e) => {
+    setValue(e.target.value);
+    console.log("Text input changed:", e.target.value);
+  };
+```
+This way I'm tracking my changes & storing the value that I'm putting inside the input tag, inside state variable.
+
+* Now I want to get redirected to a new page upon clicking on submit.
+* If I use `window.object.href` the whole page will be refreshed. We're making a SPA so obviously we don't want that to happen.
+
+### ➡️ React Router
+React Router is the standard library for handling routing in React applications — it lets you create single-page apps (SPAs) that can have multiple "pages" without actually reloading the browser.
+
+* Instead of the server serving different HTML files for each URL, React Router changes the UI based on the URL path while keeping the app running in the browser.
+
+**Why React Router?**
+* Enables navigation between components based on the URL.
+* Keeps the UI in sync with the browser’s address bar.
+* Avoids full page reloads → faster navigation.
+* Can handle nested routes, dynamic routes, and redirects.
+
+Installation
+```
+npm install react-router-dom
+```
+Enabling React Router in your project.
+* Go to `main.jsx` & `import {BrowserRouter} from 'react-router-dom'`
+* Wrap your <App /> like this
+```
+<BrowserRouter>
+      <App />
+</BrowserRouter>
+```
+-------------------------
+* Now We'll make a new page in our game named `PlayGame.jsx`
+* We'll introduce `<Routes>` in `App.jsx` → 
+```
+import {Route, Routes} from 'react-router-dom'
+...
+return (
+    <Routes>
+      <Route path="/" element={<TextInputFormContainer />} />
+      <Route path="/button" element={<Button />} />
+      <Route path="/text-input" element={<TextInputForm />} />
+    </Routes>
+  )
+```
+
+* On each route we'll define which component will render.
+* Now if we want to redirect to any page inside we can use `Link to =" "` which is provided from React Router. 
+
+In `PlayGame.jsx` →
+```
+return (
+    <>
+      <h1>Play Game</h1>
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+    </>
+  );
+``` 
+In `StartGame.jsx` →
+```
+return (
+    <div>
+      <h1 className="text-2xl font-bold">Welcome to Hangman!</h1>
+      <p className="text-lg">Get ready to guess the word!</p>
+      <TextInputFormContainer />
+      <Link to="/play" className="text-blue-600">Start Game</Link>
+    </div>
+  );
+```
+* Now we want that upon clicking on Submit button we should get redirected to the PlayGame page after 3 seconds.
+
+It gives a programatic way where I can embed my logics also.
+We'll use Navigate hook to control this. 
+
+Inside `TextInputFromContainer` →
+```
+import { useNavigate } from "react-router-dom";
+...
+const navigate = useNavigate();
+
+    const handleFormSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted:", value);
+    if (value) {
+      // Navigate to the play page if the value is valid.
+        setTimeout(() => {
+            navigate("/play");
+        }, 3000);
+    }
+  };
+...
+```

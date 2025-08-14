@@ -1610,3 +1610,178 @@ const navigate = useNavigate();
   };
 ...
 ```
+* Now I want to transfer the Data that I've been putting inside the input tag.
+`StartPage.jsx` → `PlayPage.jsx`
+
+If we check the `TextInputFormContainer` We'll see a state which holds `value` & our taget is to send that value to `PlayPage.jsx`
+
+Now Let's talk about `URL Structure` → 
+* Constant Part of the URL
+```
+/blog
+```
+* **Path Params**: Only value & it just becomes part of the main URL.
+```
+/blog/4
+```
+* **Query Params**: Key Value pair (`?___=___&___=___`) Representation of data:
+```
+/blog?date=24_08_25&author=pratik
+```
+We'll try to give the `/play` from `TextInputFormContainer` a path param in this way.
+```
+const handleFormSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted:", value);
+    if (value) {
+      // Navigate to the play page if the value is valid
+        setTimeout(() => {
+            navigate(`/play?text=${value}`);
+        }, 3000);
+    }
+  }
+```
+in the URL bar query params will show like this:
+```
+http://localhost:5173/play?text=pratik
+```
+To fetch the value in `PlayGame.jsx` react-router Dom will give us a hook called `useSearchParams()`
+```
+const PlayGame = () => {
+  const params = useSearchParams();
+  return (
+    <>
+      <h1>Play Game</h1>
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+    </>
+  );
+};
+``` 
+`useSearchParams()` returns an array & we'll be destructuring the array & will find `searchParams`
+```
+const [searchParams] = useSearchParams()
+```
+Up next we'll use `.get("text")` to fetch the value of `text` key which is basically our written word.
+```
+const [searchParams] = useSearchParams();
+  console.log("Search params:", searchParams.get("text"));
+```
+
+**Now as we can see this solution is not good for the Game we're making as we can see the hidden word in the URL already.**
+
+We can try doing this through Path Params -
+Unlinke query params this type of params are integral part of URL. So we need to define it in our `App.jsx` file through `:text`. `:` means this part of the URL is variable.
+```
+<Route path="/play/:text" element={<PlayGame />} />
+```
+Now We've registered our path params & our `TextInputFormContainer` will look like this:
+```
+setTimeout(() => {
+            navigate(`/play/${value}`);
+        }, 3000);
+```
+We'll be able to access the value in `PlayGame.jsx` using `useParams()` hook given by React Router. It gives us an object & if we remember that in our `App.jsx` we gave the variable name `:text`.
+```
+const PlayGame = () => {
+  const { text } = useParams();
+  return (
+    <>
+      <h1>Play Game {text}</h1>
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+    </>
+  );
+};
+```
+Multiple Path Params are also possible:
+
+`App.jsx`
+```
+<Route path="/play/:text/:id" element={<PlayGame />} />
+```
+`TextInputFormContainer`
+```
+setTimeout(() => {
+            navigate(`/play/${value}/2`);
+        }, 3000);
+```
+`PlayGame.jsx`
+```
+const { text, id } = useParams();
+  return (
+    <>
+      <h1>Play Game {text} {id} </h1>
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+    </>
+  );
+```
+**Even this solution is not good for our game as it'll show the data on URL**
+
+3rd way: Using React-Router we can directly access the value from one page to another using another argument in Navigate with state property.
+
+`TextInputFormContainer`
+```
+setTimeout(() => {
+            navigate(`/play`, { state: { wordSelected: value } });
+        }, 3000);
+```
+We can pass any value in that state. I've passed an object with key `wordSelected`. Whatever I assign inside `state`, can fetch it to the page I'm navigating to. → `\play`
+
+We'll use `useLocation()` hook in `PlayGame.jsx` that'll return an object. If we destructure that - we'll get state property. Inside state we created the key `wordSelected` which we can access directly. 
+
+`PlayGame.jsx`
+```
+const PlayGame = () => {
+  const {state} = useLocation();
+  return (
+    <>
+      <h1>Play Game {state.wordSelected}</h1>
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+    </>
+  );
+};
+```
+Now as we've seen in Hangman-Game, we need kind of interface where the recieved word gets masked/hidden in this way - `_ _ _ _ _`
+* We'll be making a new Folder named `MaskedText` in componenets & then I'll be generating files named →  `MaskedText.jsx` & `MaskingUtility.js` 
+
+inside `MaskingUtility.js` we'll be taking two arguments → `originalWord` (given input in the first place & expected to be guessed), `guessedLetters` (Letters which are guessed by the player.)
+
+* I'll at first put all the letters to uppercase & then will make a new `.set` in `MaskingUtility.js`.
+```
+export function getAllCharacters(originalWord, guessedLetters) {
+  guessedLetters = guessedLetters.map(letter => letter.toUpperCase());
+  const guessedLettersSet = new Set(guessedLetters);
+}
+```
+* `.set` will add/update a value for a given key.
+* Now we'll take `originalWord` → Will change it to all `uppercase` → then will `split` it into an array & then use `map` to go over each `char`. Will check if `guessedLettersSet`'s char are matching with original word. If yes it'll show that `char` or else it'll show `_`
+```
+export function getMaskedString(originalWord, guessedLetters) {
+  guessedLetters = guessedLetters.map(letter => letter.toUpperCase());
+  const guessedLettersSet = new Set(guessedLetters);
+
+  const result = originalWord.toUpperCase().split("").map(char => {
+    if (guessedLettersSet.has(char)) {
+      return char;
+    } else {
+      return "_";
+    }
+  });
+
+  return result.join("");
+}
+```
+Now if we copy this code to console & call 
+```
+getMaskedString ("humble", ["h","m","e"])
+```
+then we'll get this → 
+```
+H_M__E
+```
+* Now we'll be moving to `MaskedText.jsx` file where we'll make the UI for this part.
+* We'll take two arguments named `text` & `guessedLetters` in `MaskedText` function.
+* Next we'll bring `getMaskedString` 
+```
+const maskedString = getMaskedString(text, guessedLetters);
+```
+* Whatever we'll pass in `const MaskedText = ({text, guessedLetters})` will automatically get inside `const maskedString = getMaskedString(text, guessedLetters);`

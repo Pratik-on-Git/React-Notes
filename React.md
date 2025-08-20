@@ -1767,7 +1767,7 @@ export function getMaskedString(originalWord, guessedLetters) {
     }
   });
 
-  return result.join("");
+  return result;
 }
 ```
 Now if we copy this code to console & call 
@@ -1785,3 +1785,609 @@ H_M__E
 const maskedString = getMaskedString(text, guessedLetters);
 ```
 * Whatever we'll pass in `const MaskedText = ({text, guessedLetters})` will automatically get inside `const maskedString = getMaskedString(text, guessedLetters);`
+
+### 📃 Rendering Lists:
+React says put any array inside `{ }` & we'll render it.
+
+`PlayGame.jsx`
+```
+const arr = ["hello", "world"]
+return (
+  <>
+    <h1> Play Game {state.wordSelected}</h1>
+    {arr}
+    <Link to="/start" className="text-blue-600">Back to Start</Link>
+  </>
+)
+```
+It'll render `helloworld`
+* Now to render a tag as `h1` we've to map each of the elements.
+```
+return (
+    <>
+      <h1>Play Game {state.wordSelected}</h1>
+      {arr.map((element) => (
+        <h1>{element}</h1>
+      ))}
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+    </>
+  );
+```
+This was if I render a list/array in my React Components, it's important to pass a `key` prop so that React can identify each items uniquely. 
+```
+return (
+    <>
+      <h1>Play Game {state.wordSelected}</h1>
+      {arr.map((element, idx) => (
+        <h1 key={idx}>{element}</h1>
+      ))}
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+    </>
+  );
+```
+Now we'll be using the same logic to `MaskedText.jsx`
+```
+import { getMaskedString } from "./MaskingUtility";
+const MaskedText = ({text, guessedLetters}) => {
+
+  const maskedString = getMaskedString(text, guessedLetters);
+  return (
+    <>
+      {maskedString.map((letter, index) => (
+        <span key={index} className="mx-1">
+          {letter}
+        </span>
+      ))}
+    </>
+  );
+};
+
+export default MaskedText;
+```
+* We'll use this `MaskedText` components inside `PlayGame.jsx`
+```
+import { Link, useLocation } from "react-router-dom";
+import MaskedText from "../components/MaskedText/MaskedText";
+
+const PlayGame = () => {
+  const {state} = useLocation();
+  // const { text } = useParams();
+  // const [searchParams] = useSearchParams();
+  // console.log("Search params:", searchParams.get("text"));
+  return (
+    <>
+      <h1>Play Game {state.wordSelected}</h1>
+      <MaskedText text={state.wordSelected} guessedLetters={[]} />
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+    </>
+  );
+};
+
+export default PlayGame;
+```
+* As of now the section UI will show blank as the `guessedLetters={[]}` is initially none.
+
+Now We'll make the keyboard of Hangman App.
+* Create a Component folder named `LetterButtons` & create a jsx named `LetterButtons.jsx`
+* Inside that we'll create a `const` named `alphabates` which will store `"QWERTYUIOPASDFGHJKLZXCVBNM".split("")`
+* Create a set of original letters from the text & Create a set of guessed letters for quick lookup
+```
+const alphabets = "QWERTYUIOPASDFGHJKLZXCVBNM".split("");
+const LetterButtons = ({ text, guessedLetters, onLetterClick }) => {
+
+  // Create a set of original letters from the text
+  const originalLetters = new Set(text.toUpperCase().split(""));
+  // Create a set of guessed letters for quick lookup
+  const guessedLettersSet = new Set(guessedLetters);
+};
+
+export default LetterButtons;
+```
+* Now we'll make an Array of `buttons` through map function. In alphabates all the letters are unique so we will be using that as a key. A custom string is made as `button - ${letter}`. We'll Also print the letter
+```
+const buttons = alphabets.map((letter) => {
+    return (
+      <button
+      key={`button - ${letter}`}
+      >
+          {letter}
+      <button/>)})
+```
+* We'll be returning `const buttons` also.
+```
+return <>{buttons}</>;
+```
+* We'll be adding some props to the `<button>`. First we'll be passing `onClick`. Parent component will tell us what'll happen on click through `onLetterClick`
+```
+<button
+        key={`button - ${letter}`}
+        onClick={onLetterClick}>
+```
+* Next property we'll be keeping as `disabled. Buttons I've clicked will be disabled through this.
+```
+return (
+      <button
+        key={`button - ${letter}`}
+        onClick={onLetterClick}
+        disabled={guessedLettersSet.has(letter)}
+      >
+        {letter}
+      </button>
+    );
+```
+For the letter current button is been made, if that letter has been guessed then disable it.
+
+* Next we'll be adding a component to figure out the style. In that button I'll be passing this function `${buttonsStyle(letter)` which will define the colors based on the click on buttons. If the guessed letter is correct then It should be present inside original letters. if it's wrong then it'll be shown red.
+```
+const buttonsStyle = function (letter) {
+    if (guessedLettersSet.has(letter)) {
+      return `${originalLetters.has(letter) ? "bg-green-500" : "bg-red-500"};
+    }
+    return "bg-blue-500 hover:bg-blue-600";
+  };
+
+  const buttons = alphabets.map((letter) => {
+    return (
+      <button
+        key={`button - ${letter}`}
+        onClick={onLetterClick}
+        disabled={guessedLettersSet.has(letter)}
+        className={`h-12 w-12 m-1 rounded-md text-white font-bold ${buttonsStyle(letter)}`}
+      >
+        {letter}
+      </button>
+    );
+  });
+```
+* Now inside `PlayGame.jsx` we'll be putting this with the prop values.
+```
+<div>
+      <LetterButtons
+        text={state.wordSelected}
+        guessedLetters={[]}
+        onLetterClick={() => {}}
+      />
+    </div>
+```
+* Now we'll write the logic of guessing inside `PlayGame.jsx`. upon changes on the guessed letter - the UI should change. Dosen't matter if it's a right guess or a wrong guess. To achieve that we need to rerender our componenets so we'll use `useState` hook. I want to track my variables & UI Changes.
+```
+const [guessedLetters, setGuessedLetters] = useState([]);
+```
+* We'll be adding a function - `function handleLetterClick(letter)`
+* For updation of Array we need to approach it differently to make a new array from this - `useState([])`. We'll be destructuring all the elements of the old array by `...guessedLetters`& then will add new `letter`
+```
+function handleLetterClick(letter) {
+    setGuessedLetters([...guessedLetters, letter]);
+  }
+```
+* Now we'll pass `handleLetterClick` inside `onLetterClick` of `<LetterButtons/>` & inside `guessedLetters` of both `MaskedText` & `LetterButtons` we'll be passing our state variable `guessedLetters`
+```
+const PlayGame = () => {
+  const {state} = useLocation();
+  const [guessedLetters, setGuessedLetters] = useState([]);
+  function handleLetterClick(letter) {
+    setGuessedLetters([...guessedLetters, letter]);
+  }
+  // const { text } = useParams();
+  // const [searchParams] = useSearchParams();
+  // console.log("Search params:", searchParams.get("text"));
+  return (
+    <>
+      <h1>Play Game</h1>
+      <MaskedText text={state.wordSelected} guessedLetters={guessedLetters} />
+    <div>
+      <LetterButtons
+        text={state.wordSelected}
+        guessedLetters={guessedLetters}
+        onLetterClick={handleLetterClick}
+      />
+    </div>
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+    </>
+  );
+};
+```
+After writing this code the whole UI will go blank after clicking on any Button in the webpage.
+
+**Reason :**
+* In console It'll show that inside `MaskingUtility.js` `letter.toUpperCase()` function is not available.
+* If we console.log - `guessedLetters` we'll see empty arrray inside. Then if we click on any of the letter button it'll add a event mistakenly. This has happened because of a mistake we've done in page `PlayGame.jsx`
+* `const buttonsStyle = function (letter)` is just a event handler & we've mistakenly passed the letter inside it. We should be passing an event instead.
+* We'll get event object inside event handler. When I'll get event object we'll be fetching value from that event object. 
+* Now we'll go to `LetterButtons.jsx` & we passed `onLetterClick` directly last time in `onClick`. This time we'll create a function.
+```
+function handleLetterClick(event) {}
+```
+* To extract character from the `event` object we'll be giving a prop named `value` & will pass `{letter}`. 
+```
+function handleLetterClick(event) {
+  const characterOfTheLetter = event.target.value;
+    onLetterClick(characterOfTheLetter);
+  }
+
+  const buttons = alphabets.map((letter) => {
+    return (
+      <button
+        key={`button - ${letter}`}
+        value={letter}
+        onClick={handleLetterClick}
+        disabled={guessedLettersSet.has(letter)}
+        className={`h-12 w-12 m-1 rounded-md text-white font-bold ${buttonsStyle(letter)}`}
+      >
+        {letter}
+      </button>
+    );
+  });
+```
+* Now if from parent component there's no callback been passed for `onLetterClick`
+For that we can use `onLetterClick?.`
+
+#### What's `?.` operator
+We call it `Optional Chaining`. The variable you're gonna put optional chaining operator - if that variable is of a non-undefined value then it'll call the object's property/will call the function.
+
+How it works:
+
+When the `?.` operator is used in an expression like `obj?.prop` or `obj?.method()`, if `obj` is `null` or `undefined`, the entire expression immediately "short-circuits" and evaluates to `undefined` instead of throwing a `TypeError`. This eliminates the need for explicit null or undefined checks at each level of nesting.
+
+So, In our project it would check if `onLetterClick` is working as a valid function then it'll get called with `characterOfTheLetter` argument. If a valid function is not passed from the parents to `LetterButtons ({onLetterClick})` & Letter Buttons are clicked in the webpage it'll check that this function is not valid. So It'll not execute the rest of the part.
+
+The whole codebase for `LetterButtons.jsx` looks like this now.
+```
+const alphabets = "QWERTYUIOPASDFGHJKLZXCVBNM".split("");
+const LetterButtons = ({ text, guessedLetters, onLetterClick }) => {
+
+  // Create a set of original letters from the text
+  const originalLetters = new Set(text.toUpperCase().split(""));
+  // Create a set of guessed letters for quick lookup
+  const guessedLettersSet = new Set(guessedLetters);
+
+  const buttonsStyle = function (letter) {
+    if (guessedLettersSet.has(letter)) {
+      return `${originalLetters.has(letter) ? "bg-green-500" : "bg-red-500"}`;
+    }
+    return "bg-blue-500 hover:bg-blue-600";
+  };
+
+  function handleLetterClick(event) {
+    const characterOfTheLetter = event.target.value;
+    onLetterClick?.(characterOfTheLetter);
+  }
+
+  const buttons = alphabets.map((letter) => {
+    return (
+      <button
+        key={`button - ${letter}`}
+        value={letter}
+        onClick={handleLetterClick}
+        disabled={guessedLettersSet.has(letter)}
+        className={`h-12 w-12 m-1 rounded-md text-white font-bold ${buttonsStyle(letter)}`}
+      >
+        {letter}
+      </button>
+    );
+  });
+
+  return <>{buttons}</>;
+};
+
+export default LetterButtons;
+```
+Now the whole code would work perfectly & upon repeatative letter word like `apple` upon clicking in `P` it would fill up two spaces.
+
+* Now We'll be saving Hangman images (from Excalidraw) as `1.svg`, `2.svg` etc. in our `src/images`. Next we'll be creating a file named `HangMan.jsx`. Will pass a prop named `step`.
+```
+import Level1 from '../../../public/images/1.svg'
+import Level2 from '../../../public/images/2.svg'
+import Level3 from '../../../public/images/3.svg'
+import Level4 from '../../../public/images/4.svg'
+import Level5 from '../../../public/images/5.svg'
+import Level6 from '../../../public/images/6.svg'
+
+function HangMan({ step }) {
+}
+
+export default HangMan;
+```
+* The value of `step` will let us know in which Level we're currently.
+* Now we'll create an array of images. Will use it inside a logic. If step is bigger than/equals to the length of the images array, then show the last image or render the image of the step.
+```
+function HangMan({ step }) {
+    const images = [Level1, Level2, Level3, Level4, Level5, Level6];
+    return(
+        <div className="w-[300px] h-[300px]">
+            <img 
+            src={step>=images.length ? images[images.length - 1] : images[step]} 
+            alt={`Hangman step ${step}`} />
+        </div>
+    )
+}
+```
+* Now I want to step up whenever i guess somet wrong letter. So for that we'll be adding a state variable in `PlayGame.jsx`
+```
+const [step, setStep] = useState(0);
+```
+* If the word we got through input matches with the `letter` that we've typed then `console.log("Correct guess:", letter)` or else `setStep(step + 1);` increase step counter by one.
+```
+const [step, setStep] = useState(0);
+  function handleLetterClick(letter) {
+    if (state.wordSelected.toUpperCase().includes(letter)) {
+      console.log("Correct guess:", letter);
+    } else {
+      setStep(step + 1);
+    }
+    setGuessedLetters([...guessedLetters, letter]);
+  }
+```
+## 🗺️ React Component Lifecycle
+In React, every component goes through a lifecycle — from being **created, updated, and finally removed from the DOM**. This lifecycle is divided into three main phases:
+
+### 🔑 React Component Lifecycle Phases
+#### 1. Mounting Phase (When component is created & inserted into the DOM) 
+Happens when the component is rendered for the first time.
+
+#### 2. Updating Phase (When component is re-rendered due to changes)
+Triggered when props or state changes.
+
+#### 3. Unmounting Phase (When component is removed from the DOM)
+Cleanup before the component disappears.
+
+Now, this can be the scenario that **I want to track the event changes & want to do something on basis of that**. To achieve that we'll be using a hook called `useEffect()`. 
+
+### 👉 `useEffect()`
+It will help you to control instructions to be executed during different lifecycle events of a component in React.
+
+* `useEffect()` in React is a Hook that lets you run side effects in function components.
+
+It acts like a combination of `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` in class components.
+
+**Syntax:** It takes two parameters. 1. Callback, 2. Array
+```
+useEffect(() => {
+    console.log("Component Loaded");
+  });
+```
+* **First Execution :** When the component first mounts/ attaches in our DOM → Whatever logic I write inside Callback `()` `("Component Loaded")` will get executed.
+
+* **Second Execution :** Whenever the component re-renders/gets updated.
+
+Now whenever we click on `show/hide` button it'll give us `"Component Loaded"` on console as everytime the state is changing/getting updated.
+
+Now If I need a **More Granular Control** -  
+
+* No Dependency Array ([] missing) → Runs after every render.
+```
+useEffect(() => {
+    console.log("Component Loaded");
+  });
+```
+* Empty dependency array ([]) → Runs only once (like componentDidMount). The first time component renders.
+```
+useEffect(() => {
+    console.log("Component Loaded");
+  },[]);
+```
+* With dependencies ([value1, value2]) → Runs whenever those dependencies change.
+```
+  useEffect(() => {
+    console.log("Component Loaded");
+  }, [value]);
+```
+Cleanup function (return () => { ... }) → Runs before component unmount OR before the effect runs again.
+```
+useEffect(() => {
+    console.log("Temp component mounted");
+
+    return () => {
+      console.log("Temp component unmounted");
+    };
+    // Cleanup logic
+  }, []);
+```
+### `<StrictMode>`
+A devloper friendly mode. Mostly when we run our app in strict mode it's tend to get loaded twice.
+
+* You can think of `useEffect` as a way to run side effects in a React component. Fetching data from an API is one of the most common side effects.
+ 
+We want to make a One-Person Game now. So we'll be watching example of this property of `useEffect` through this.
+
+### 👉 Making a JSON-Server made Backend
+* Make a seperate folder for backend named `WordServer`. 
+```
+mkdir WordServer
+``` 
+* Go To `WordServer`
+```
+cd WordServer
+```
+* creatinng `package.json` file
+```
+npm init -y
+```
+* install `json-server`
+```
+npm install json-server
+```
+* make a new file in folder named `db.json` & add these types of data in it.
+```
+{
+    "words": [
+        {
+            "wordValue": "MANGO",
+            "wordHint": "A tropical fruit"
+        },
+        {
+            "wordValue": "APPLE",
+            "wordHint": "A common fruit"
+        },
+        {
+            "wordValue": "BANANA",
+            "wordHint": "A yellow fruit"
+        },
+        ...
+    ]}
+```
+* `npx json-server db.json` in terminal to run `json-server`
+* Run the `Endpoint` [Endpoints: http://localhost:3000/words]
+* You'll see in browser it'll automatically give a unique id to each of the objects
+```
+{
+    "wordValue": "MANGO",
+    "wordHint": "A tropical fruit",
+    "id": "f30a"
+}
+```
+* Now if we write `http://localhost:3000/words/f30a` in the URL section we'll only see the object of this id in the browser screen.
+
+Now we'll try to call these details through `useEffect`
+* add a new page in `pages` folder named `Home.jsx`
+```
+import { Link } from "react-router-dom"
+import Button from "../components/Button/Button";
+
+const Home = () => {
+  return (
+    <>
+      <Link to="/play">
+        <Button text="Single Player Game" styletype="error" />
+      </Link>
+      <br />
+      <Link to="/start">
+        <div className="mt-4" >
+          <Button text="Multiplayer Game" styletype="success" />
+        </div>
+      </Link>
+    </>
+  );
+};
+
+export default Home;
+```
+* Connect it to `App.jsx`
+```
+<Route path="/" element={<Home />} />
+```
+**But** Here as `<Link to="/play">` play page is not recieving any data from the start page but still is getting redirected to the page, it'll show a blank page.
+
+*So somehow we need to send some data to play page to start the Single Player Game.*
+
+* If we send it in this way then it'll start the game with the word `"example"`. 
+
+* Using link tag when I'm redirecting to the `PlayGame.jsx` page, then I'm sending some data in `state` property & that data is getting fetched by `useLocation` in `PlayGame.jsx`
+```
+<Link to="/play" state={{ wordSelected: "example" }}>
+```
+* Now I don't want my feature to work like this obviously. So first of all delete `state={{ wordSelected: "example" }}`
+* We should handle our `PlayGame.jsx` in such a way that if `wordSelected` is passing a null value then it should be handled accordingly.
+
+* Inside `PlayGame.jsx` add optional chaining for all of the `wordSelected` 
+```
+if (state?.wordSelected?.toUpperCase().includes(letter)) 
+...
+<MaskedText text={state?.wordSelected}
+...
+<LetterButtons
+        text={state?.wordSelected}
+...
+```
+To make the logic easier we'll be using short circuting through a conditional -
+```
+return (
+    <>
+      <h1>Play Game</h1>
+      {state?.wordSelected && (
+        <>
+          <MaskedText text={state?.wordSelected} guessedLetters={guessedLetters} />
+          <div>
+      <LetterButtons
+        text={state?.wordSelected}
+        guessedLetters={guessedLetters}
+        onLetterClick={handleLetterClick}
+      />
+    </div>
+    <div>
+      <HangMan step={step} />
+    </div>
+        </>
+      )}
+    
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+    </>
+  );
+```
+* Now inside `Home.jsx` page we'll add state property `state={{ wordSelected: word }}` & we'll be making a state variable to pass the word. 
+```
+const Home = () => {
+    const [word, setWord] = useState("");
+  return (
+    <>
+      <Link to="/play" state={{ wordSelected: word }}>
+        <Button text="Single Player Game" styletype="error" />
+      </Link>
+...
+)}
+```
+* We're sending this `state={{ wordSelected: word }}` useState variable word to `state` property & we're accessing that value in `PlayGame.jsx` `useLocation()`
+* Now I want that from backend a word randomly come & updates the `useState("")` here. When I'm redirecting to the homepage then my data gets downloaded (mounting).
+```
+useEffect(() => {
+        fetchWords()
+    }, []);
+```
+Now, we'll use `async` & will add the `fetchWords()`. JS dosen't know how to raise a Network Request but our Browser gives us a functionality where we can raise a network request using `fetch` API. We can call a neywork through this.
+```
+async function fetchWords() {
+        // Fetch words from the API
+        const response = await fetch("http://localhost:3000/words/");
+        // Convert the fetched data to JSON
+        const data = await response.json();
+        // Assuming the API returns an array of words, pick one at random
+        const randomIndex = Math.floor(Math.random() * data.length);
+        setWord(data[randomIndex]);
+    }
+    
+    useEffect(() => {
+        fetchWords()
+    }, []);
+```
+Whenever my data is gonna be downloaded, It'll pick a random value & whatever value is in that random index value that'll be saved in my `useState` variable.
+```
+const Home = () => {
+    const [word, setWord] = useState("");
+
+    async function fetchWords() {
+        // Fetch words from the API
+        const response = await fetch("https://random-word-api.vercel.app/api?words=100");
+        // Convert the fetched data to JSON
+        const data = await response.json();
+        // Assuming the API returns an array of words, pick one at random
+        const randomIndex = Math.floor(Math.random() * data.length);
+        setWord(data[randomIndex]);
+        console.log("Fetched word:", data[randomIndex]);
+    }
+    
+    useEffect(() => {
+        fetchWords()
+    }, []);
+
+  return (
+    <>
+      <Link to="/play" state={{ wordSelected: word }}>
+        <Button text="Single Player Game" styletype="error" />
+      </Link>
+      <br />
+      <Link to="/start">
+        <div className="mt-4" >
+          <Button text="Multiplayer Game" styletype="success" />
+        </div>
+      </Link>
+    </>
+  );
+};
+```
+* In `PlayGame.jsx` we'll add this link tag
+```
+<Link to="/" className="text-red-600">Back to Home</Link>
+      <Link to="/start" className="text-blue-600">Back to Start</Link>
+```
+Upon clicking on `Back to Home` it'll select a new word everytime. In UI first there was `Home.jsx` componenet - from there you went to `PlayGame.jsx` so Home Componenet got removed.
+* From `PlayGame.jsx` when you'll come to `Home.jsx` it'll mount back again & again `useEffect` will get called as it'll always get called on first load.

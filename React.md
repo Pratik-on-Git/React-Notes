@@ -2391,3 +2391,33 @@ const Home = () => {
 ```
 Upon clicking on `Back to Home` it'll select a new word everytime. In UI first there was `Home.jsx` componenet - from there you went to `PlayGame.jsx` so Home Componenet got removed.
 * From `PlayGame.jsx` when you'll come to `Home.jsx` it'll mount back again & again `useEffect` will get called as it'll always get called on first load.
+
+## 📚 Context API
+The Context API in React is a way to share data (state, functions, or values) across multiple components without having to pass props manually at every level (also called prop drilling).
+
+**We use it when multiple nested components need the same data.**
+
+Example:
+* Theme (light/dark mode)
+* Authentication state (logged in user info)
+* Language/Localization settings
+* Shopping cart in an e-commerce app
+
+Liftig the states up causes the problem of prop drilling as the whole data stays nested.
+
+* What if I put this data in a central seperate storage which is different from componenet hirearchy. We'll create it for the datas that gets shared across differnt components.
+
+* Whichever component needs that data can directly access it without disturbing the whole component tree & other components.
+
+* This technique of managing the state across the application is called state management.
+
+React used to use 3rd party libraries like Redux, Zustand, Mobx etc. to do state management as there was no provisions for the state management in React for a long period of time. Until React introduced Context API.
+
+**For the Hangman App, we can download the words of `Home.jsx` & we'll be acessing it in a sepearte storage**:
+```
+const response = await fetch("https://random-word-api.vercel.app/api?words=100");
+```
+Even we'll put the `word` state inside the sepearte storage.
+* I want a button in `PlayGame.jsx` page named Restart 
+
+Now we'll create a folder named `context` in `src` → Will create a file named `WordContext.js`

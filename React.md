@@ -2421,3 +2421,198 @@ Even we'll put the `word` state inside the sepearte storage.
 * I want a button in `PlayGame.jsx` page named Restart 
 
 Now we'll create a folder named `context` in `src` → Will create a file named `WordContext.js`
+```
+import { createContext } from "react";
+
+const WordContext = createContext();
+
+export default WordContext;
+```
+This WordContext will work as the store. Now we need to make it available inside our hirearchy.
+
+* We'll go to `main.jsx` & wrap with this provider component
+```
+...
+import WordContext from './context/WordContext.js';
+
+createRoot(document.getElementById('root')).render(
+  
+    <BrowserRouter>
+      <WordContext.Provider>
+        <App />
+      </WordContext.Provider>
+    </BrowserRouter>
+)
+```
+Now we need to make our context object available to all our components-
+so we'll go to `app.jsx` & then will create a state variable where we'll store the wordList. 
+
+We'll pass the state in `.Provider` using the property `value` which expects an object. We'll evaluate the value with `{}`
+```
+const [wordList, setWordList] = useState([]);
+
+  return (
+    <WordContext.Provider value={{ wordList, setWordList }} >
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/start" element={<StartGame />} />
+        <Route path="/play" element={<PlayGame />} />
+      </Routes>
+    </WordContext.Provider>
+  )
+```
+* Now It'll be available everywhere.
+Reacts provides us a hook named `useContext()`. This hook expects the context object (that we've made available to the whole app) as a parameter.
+* We'll go to `Home.jsx` & will put this inside `function Home()`. 
+* It'll return an object where all the values that we've passed through the `value` prop will be present.
+```
+const { setWordList } = useContext(WordContext);
+```
+Now the first time we've fetched all the words from `const response = await fetch("https://random-word-api.vercel.app/api?words=100");` we'll store the fetched word in context & will destrcture the data.
+```
+setWordList([...data]); // Store the fetched words in context
+```
+
+The fetched brand new array of words will be now available in common storage. Where ever I want to access that now I can do that.
+
+We need to use `useContext()` where ever I want to use the data.
+Example: `PlayGame.jsx`
+```
+const PlayGame = () => {
+  ...
+  const { wordList } = useContext(WordContext);
+...
+{wordList.map((word, index) => (
+        <li key={index}>{word}</li>
+      ))}
+```
+* Displays the list of words fetched from context through Context API.
+Previously when we're going from Home page to `PlayGame.jsx` page, we were sending `wordSelected` inside the `state` props of `Link` component `<Link to="/play" state={{ wordSelected: word }}>`
+
+Now we can do this way instead as we've a common storage.
+
+1. We can delete the `const [word, setWord] = useState("");` storage of words from `Home.jsx`
+2. Can put that state of Word in `App.jsx`
+```
+function App() {
+
+  const [wordList, setWordList] = useState([]);
+  const [word, setWord] = useState("");
+
+  return (
+    <WordContext.Provider value={{ wordList, setWordList, word, setWord }} >
+...
+```
+3. `Home.jsx` can access both `const { setWordList, word, setWord } = useContext(WordContext);` now but we'll just keep 
+```
+const { setWordList, setWord } = useContext(WordContext);
+```
+4. Was accessing `useLocation()` in `PlayGame.jsx` which now I don't need to use anymore. We'll directly fetch `word` now.
+```
+const PlayGame = () => {
+  // const {state} = useLocation();
+
+  const { wordList, word } = useContext(WordContext);
+  ...
+```
+5. All the `state?.wordSelected` will now be exchanged with `word`
+```
+return (
+    <>
+      ...
+      {word && (
+        <>
+          <MaskedText text={word} guessedLetters={guessedLetters} />
+          <div>
+      <LetterButtons
+        text={word}
+...
+```
+Hence we don't need router/state etcs to send data now to other pages
+
+## 🌟 Zustand
+Installing Zustand
+```
+npm i zustand
+```
+in zustand's language the common storage is called store. It says to build multiple stores.
+* Let's make a new folder named `store` in `src` ➡️ `WordStore.js`
+```
+import { create } from "zustand";
+const wordStore = create();
+```
+* `{create}` function creates a store and returns a hook to use the store in components. It takes a callback & create function is the one who'll be responsible to pass it. 
+* It expects a parameter named `set`.
+* Let's make our first state named `wordList` & keep it as an empty array first. Second one `word` - keep it as an empty string.
+```
+const wordStore = create((set) => ({
+  wordList: [],
+  word: "", 
+```
+* Now we'll make the setters. We've to write setter implementations manually. We've made a function `setWordList` & when I'll call it I'll pass a `list` & want to update it in my `wordList: []` array. to do that we'll us the setter function `(set)`→`set()`
+* This setter function will take a callback in it's own. It'll take a property named `state` & it'll return a desturctured state `{...state} 
+* Also we'll set the `list` inside `wordList`
+```
+const wordStore = create((set) => ({
+  wordList: [],
+  word: "",        
+  setWordList: (list) => set((state) => {
+    console.log("State Printing", state);
+    return { ...state, wordList: list };
+  }),
+}))
+```
+We can access it where ever we want to access in the whole application.
+* In `Home.jsx` we'll delete the `setWordList` form the context & will add `const { setWordList } = wordStore();`. We're accessing the Zustand store to get the setWordList action.
+* Now I want to access this wordlist in my `PlayGame.jsx`. So we'll delete `wordList` from Context & will add it here - 
+`const { wordList } = wordStore();`
+
+In console we'll get `State Printing` printed.
+
+Same way we can access the words in the same way without using context. in `Home.jsx` we'll do this -
+```
+// const { setWord } = useContext(WordContext);
+     const { setWordList, setWord } = wordStore();
+```
+We'll be accessing the Zustand store to get the setWord action.
+
+In `WordStore.js` we don't have an action to set the current word to guess - so we'll make one the same way:
+```
+setWord: (newWord) => {
+  set((state) => {
+    return {
+        {...state, , word: newWord}
+    }
+  })
+}
+```
+In `PlayGame.jsx` we'll be deleting Context API & will be adding it through Zustand.
+```
+// const { word } = useContext(WordContext);
+  const { wordList, word } = wordStore();
+```
+So Using Zustand we'll be creating one file through which we'll share the datas in all the componenets.
+
+## ✅ Atomic Design
+Atomic Design is a methodology for creating design systems introduced by Brad Frost. It’s inspired by chemistry and breaks down user interfaces into small, reusable building blocks that combine to form complete systems.
+
+Here’s the hierarchy of Atomic Design:
+#### 1. Atoms: 
+The smallest, indivisible building blocks of the UI.
+* HTML tags like buttons, inputs, labels, icons, or colors.
+
+#### 2. Molecules: 
+Example: A search form (input field + button + label).
+#### 3. Organisms: 
+Relatively complex UI components composed of molecules (and sometimes atoms).They form distinct sections of the interface.
+* Example: A navigation bar (logo + menu items + search form).
+#### 4. Templates: 
+Page-level objects that place organisms in a layout. They focus on structure and content placement, not final design details.
+
+* Example: A product page layout with header, product image, description, and footer placeholders.
+
+#### 5. Pages: 
+  Specific instances of templates with real content. They are the final product the user sees and interact with. Great for testing design consistency and flexibility.
+* Example: A fully designed “Nike Air Max Product Page” with real images, prices, and reviews.
+
+## 🗺️ Re-Renders

@@ -2815,3 +2815,25 @@ export default function ButtonWithModal() {
 Now as the `useModalDialoug.js` is not getting directly used in `App.jsx`, it won't get bothered. We've put all the logics of the state inside `ButtonWithModal.jsx` & to make it more reusable we've bind it inside one custom hook.
 
 #### Now if the scenario is like this - You can't shift the state from parent to somewhere else.
+
+**App.jsx**
+```
+function App() {
+  const [x, setX] = useState(0);
+
+  return (
+    <>
+      <div>
+        Test Before Slow Component
+      </div>
+      <ButtonWithModal />
+      <button onClick={() => setX(x + 1)}>Increment</button>
+      <SlowComponent/>
+      {x}
+      <div>
+        Test After Slow Component
+      </div>
+    </>
+  )
+}
+```

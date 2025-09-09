@@ -2756,3 +2756,60 @@ const { isOpen, open, close } = useModalDialog();
       {isOpen && <Modal close={close} />}
 ```
 * Open modal by using custom hook function - open when button is clicked & `isOpen` is `false` because by default it's false when modal is closed & `true` when modal is open & it's been created in `useModalDialog.js` file. Also Modal component is created in `Modal.jsx` file. 
+* Close modal by using custom hook function - close when modal is open & `isOpen` is `true` because by default it's false when modal is closed & true when modal is open & it's been created in `useModalDialog.js` file. Also Modal component is created in `Modal.jsx` file.
+* Also we need to change the `setIsOpen` function to `close` as we're passing it 
+```
+function Modal( {close} ) {
+    return (
+        <div>
+            <h1>Modal</h1>
+            <p>This is a modal</p>
+            <button onClick={close}>Close</button>
+        </div>
+    )
+}
+```
+**When you create custom hooks in React?**
+- Especially when you notice repetitive logic involving state, effects, or functionalities across multiple components.
+- A custom hook is basically a JavaScript function that starts with use and encapsulates reusable logic involving state, effects, or other hooks.
+- Instead of duplicating the same code in multiple components, you move the logic into a custom hook and reuse it wherever needed.
+
+Now you'll feel like the `isOpen` state is not in the App component, hence the changes in `isOpen` should not re-render the App component. But that's not the case. 
+
+`isOpen` is getting used inside App component, even if it's not been made in it so the whole thing is again getting time to re-render.
+
+* Wayout:
+We'll put the custom hook implementation logic wrapped into `ButtonWithModal.jsx`
+
+App.jsx
+```
+  return (
+    <>
+      <div>
+        Test Before Slow Component
+      </div>
+      <ButtonWithModal />
+      <SlowComponent />
+      <div>
+        Test After Slow Component
+      </div>
+    </>
+  )
+}
+```
+ButtonWithModal.jsx
+```
+import useModalDialog from './hooks/useModalDialog'
+import Modal from './Modal'
+
+export default function ButtonWithModal() {
+    const {isOpen, open, close} = useModalDialog();
+    return (
+        <div>
+            <button onClick={open}>Open Modal</button>
+            {isOpen && <Modal close={close} />}
+        </div>
+    )
+}
+```
+Now as the `useModalDialoug.js` is not getting directly used in `App.jsx`, it won't get bothered. We've put all the logics of the state inside `ButtonWithModal.jsx` & to make it more reusable we've bind it inside one custom hook.

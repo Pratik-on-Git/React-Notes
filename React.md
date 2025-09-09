@@ -2736,3 +2736,23 @@ export default function useModalDialog() {
     }
 }
 ```
+* Making a state variable to check if the modal is open or not by default. it's false when modal is closed & true when modal is open.
+* Making custom function to open the modal by setting the state variable to true & vice versa
+```
+open: () => setIsOpen(true),
+close: () => setIsOpen(false)
+```
+`function useModalDialog()` is a custom hook to open and close the modal by using `useState` hook inside it which is returning an object with state variable & custom functions to open and close the modal. 
+
+Technically from this function I'm returning an object that returns my state variable & two more functions. Now if I want to use this in my programme how can I do that. 
+
+Let's try to figure out:
+
+* Inside `App.jsx`: Using custom hook to open and close the modal by using `useState` hook inside it which is returning an object with state variable & custom functions to open and close the modal. 
+```
+const { isOpen, open, close } = useModalDialog();
+...
+<button onClick={open}>Open Modal</button>
+      {isOpen && <Modal close={close} />}
+```
+* Open modal by using custom hook function - open when button is clicked & `isOpen` is `false` because by default it's false when modal is closed & `true` when modal is open & it's been created in `useModalDialog.js` file. Also Modal component is created in `Modal.jsx` file. 

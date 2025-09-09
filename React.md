@@ -2616,3 +2616,123 @@ Page-level objects that place organisms in a layout. They focus on structure and
 * Example: A fully designed “Nike Air Max Product Page” with real images, prices, and reviews.
 
 ## 🗺️ Re-Renders
+Our responsibility is to make less re-renders when I'm making a Large & Complicated app which is Performance Sensetive.
+* Upon clicking on a button a Modal should open up & clicking on Close it should close the modal.
+
+On the click of the button, we might change the visibility of the modal. A state I want to keep which will represent the presence or absence of the modal.
+```
+state: isOpen (boolean value)
+```
+* Now suppose we've a slow component already in this page. 
+#### Now Let's make a project to understand the concept in better way.
+Let's take 3 files -
+
+* App.jsx
+```
+function App() {
+const [isOpen, setIsOpen] = useState(false);
+  return (
+    <>
+    <button onClick={() => setIsOpen(true)}>Open Modal</button> 
+
+      <div>
+        Test Before Slow Component
+      </div>
+      {isOpen && <Modal setIsOpen={setIsOpen} />}
+      <SlowComponent />
+      <div>
+        Test After Slow Component
+      </div>
+    </>
+  )
+}
+
+export default App
+```
+* We've taken a state `isOpen` to check if the modal is open or not. 
+
+* Button to open the modal by clicking on it & setting the state to true which is coming from `Modal.jsx` component & `isOpen` is the state that we've defined in `App.jsx` component & `setIsOpen` is the function that we've defined in `Modal.jsx` component to set the state to false when the modal is closed & also the `Modal.jsx` component is being rendered only when the state is true 
+
+`Modal.jsx` component
+```
+
+function Modal( {setIsOpen} ) {
+    return (
+        <div>
+            <h1>Modal</h1>
+            <p>This is a modal</p>
+            <button onClick={() => setIsOpen(false)}>Close</button>
+        </div>
+    )
+}
+
+export default Modal;
+```
+Another `SlowComponent.jsx` is there that's helping to make the whole app slow by taking some time to render.
+
+By default it's taking 1000ms to render. We can change it by passing the time in milliseconds to the function.
+
+```
+const waitingForSomething = (ms) => {
+    const start = Date.now();
+    let now = start;
+
+    while (now - start < ms) {
+        now = Date.now();
+    }
+}
+
+export default function SlowComponent() {
+    waitingForSomething(1000);
+    return null;
+}
+```
+
+Now you'll see that the modal is getting opened with a delay & that's what we didn't intended. We need to make it quick with render & re-render.
+
+* As the state is inside the `App.jsx` component the whole app component will be re-rendered.
+
+* Childs re-rendering = slow/heavy components re-rendering = Parent component re-rendering
+
+* To remove that what we can do is making another file - ButtonWithModal.jsx & put the state there.
+```
+import { useState } from 'react'
+import Modal from './Modal'
+
+export default function ButtonWithModal() {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <div>
+            <button onClick={() => setIsOpen(true)}>Open Modal</button>
+            {isOpen && <Modal setIsOpen={setIsOpen} />}
+        </div>
+    )
+}
+```
+The whole `ButtonWithModal.jsx` is taking care of the rendering part of the state now. So the whole site is now very smooth with the Modal Close & Open. It's not impacting the parent `App.jsx`
+
+* If a component have 10/12 props & if the value of any prop changes will the component re-render? 
+    - No. React doesn't track prop changes individually. Instead, React re-renders a component whenever its parent re-renders and passes new props - even if only one of them changes.
+
+    Parent had a state variable & in child that state variable is been passed as a prop. Now if the state changes in parent, the parent will re-render. If parent re-renders child will surely re-render.
+
+## 👉 Custom Hooks
+Custom Hooks are reusable JavaScript functions that start with `use` and allow you to extract and reuse stateful logic across multiple components.
+* Making own customized hooks that is doing any specific task for my application.
+
+Custom Hooks can also Create Problems- 
+
+To understand it deeper we'll be deep diving into the last example of Re-Renders. We'll create a `hooks` file & will add a file named `useModalDialog.js`
+```
+import { useState } from 'react'
+
+export default function useModalDialog() {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return {
+        isOpen,
+        open: () => setIsOpen(true),
+        close: () => setIsOpen(false)
+    }
+}
+```

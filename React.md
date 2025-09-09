@@ -2813,3 +2813,5 @@ export default function ButtonWithModal() {
 }
 ```
 Now as the `useModalDialoug.js` is not getting directly used in `App.jsx`, it won't get bothered. We've put all the logics of the state inside `ButtonWithModal.jsx` & to make it more reusable we've bind it inside one custom hook.
+
+#### Now if the scenario is like this - You can't shift the state from parent to somewhere else.

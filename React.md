@@ -2941,3 +2941,9 @@ This is the way to create a component `<abc/>`. But here we're not creating a co
 Hence, `RefactorComponent`'s children is not getting re-rendered even if the parent is getting re-rendered.
 
 **Statement:** Elements passed as a prop to a component, weather it's a regular prop or a children prop is not re-renders whenever it's parent component is re-renders.
+
+## 💡 Memo in React
+### Composition in React
+
+Composition means building complex components by combining smaller, reusable ones. 
+* Instead of writing everything inside a single component, you “compose” the UI by splitting logic and presentation into different layers and then assembling them together.

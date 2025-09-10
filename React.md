@@ -2837,3 +2837,77 @@ function App() {
   )
 }
 ```
+* In React we can pass functions in props, in props we can also pass components as props is just function.
+
+* Now how can I distribute that component in a way that 
+```
+<ButtonWithModal />
+      <button onClick={() => setX(x + 1)}>Increment</button>
+      <SlowComponent/>
+```
+&
+```
+<SlowComponent/>
+      {x}
+      <div>
+```
+Make a component named `RefactorComponent.jsx`
+```
+import { useState } from "react";
+
+export default function RefactorComponent() {
+    const [x, setX] = useState(0);
+    return (
+        <>
+        <button onClick={() => setX(x + 1)}>Increment</button>
+        {x}
+        </>
+    )
+}
+```
+In React you can pass one component in other component as a children prop.
+
+Now What's a **Children Prop?**
+
+Sometimes you’ll want to nest your own components the same way:
+```
+<Card>
+  <Avatar />
+</Card>
+```
+When you nest content inside a JSX tag, the parent component will receive that content in a prop called `{children}`.
+Here we're wrapping up the `App.jsx` components inside `RefactorComponent`
+```
+return (
+    <>
+      <RefactorComponent>
+      <div> Test Before Slow Component </div>
+      <ButtonWithModal />
+      <SlowComponent/>
+      <div> Test After Slow Component </div>
+      </RefactorComponent>
+    </>
+  )
+```
+Now I can access RefactorComponent in the implementation of rest of the `App.jsx` code using a children prop. 
+
+`RefactorComponent.jsx`
+```
+export default function RefactorComponent({children}) {
+    const [x, setX] = useState(0);
+    return (
+        <>
+        <button onClick={() => setX(x + 1)}>Increment</button>
+        {children}
+        {x}
+        </>
+    )
+}
+```
+* This children is nothing but the previos app.jsx code.
+
+Now the question is how the whole thing is still doing so good with performance & the issue of slow rendering resolved. How?
+
+- Every time React re-renders or mounts, it first generates a Virtual DOM/Fiber Tree from the returned elements, instead of updating the actual DOM right away. So whatever is getting returned here - React makes a tree out of these objects.
+1. Before Re-Render Version 
+2. After Re-Render Version

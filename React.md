@@ -2908,6 +2908,36 @@ export default function RefactorComponent({children}) {
 
 Now the question is how the whole thing is still doing so good with performance & the issue of slow rendering resolved. How?
 
-- Every time React re-renders or mounts, it first generates a Virtual DOM/Fiber Tree from the returned elements, instead of updating the actual DOM right away. So whatever is getting returned here - React makes a tree out of these objects.
-1. Before Re-Render Version 
-2. After Re-Render Version
+- Every time React re-renders or mounts, it first generates a Virtual DOM/Fiber Tree from the returned elements, instead of updating the actual DOM right away. React components return react elements which are actually nothing but objects. So whatever is getting returned here - React makes a tree out of these objects.
+  1. Before Re-Render Version 
+  2. After Re-Render Version
+
+         React consistently compare these two versions using diffing algorithm. It checks which elements are getting changed or not. 
+React’s reconciliation algorithm figures out which parts are going to change/updated, added, or removed. Only then applies those changes to the actual DOM.
+
+If a React element (or object) that gets returned during rendering is the same as it was in the previous render, React treats it as unchanged. React doesn’t re-render that part of the UI again.
+* If the type is the same, React assumes it’s the same kind of element and just updates its props/children - effectively re-rendering.
+* If the type is different, React unmounts the old element and mounts a completely new one in its place.
+
+👉 This is why keeping the same component type helps React efficiently update only what’s necessary.
+
+✅ Now if I define a state in Parent, React will understand that the Parent needs to get re-rendered. It'll call the parent's function. Returned child from the parent function & both will get re-rendered.
+
+🌟 Now 
+```
+function Parent ({myc}){
+  state;
+  return myc
+}
+```
+Here Child component is passed as a prop. This myc component is created outide of the Parent function. If I call parent component again the parameters won't get changed. React will compare that the changes are happening in state of the parent but it's not affecting the parameters.
+
+This is the way to create a component `<abc/>`. But here we're not creating a component, rather we're just returning a prop.
+
+📚 When you pass an object into a function → the function just uses the existing object. So no matter how many times you call that function, it’s still referring to the same object in memory (unless you modify it).
+
+📃 When you create an object inside a function → every time the function is called, a new object is created in memory. Even if the contents look the same, they’re technically different objects each time.
+
+Hence, `RefactorComponent`'s children is not getting re-rendered even if the parent is getting re-rendered.
+
+**Statement:** Elements passed as a prop to a component, weather it's a regular prop or a children prop is not re-renders whenever it's parent component is re-renders.

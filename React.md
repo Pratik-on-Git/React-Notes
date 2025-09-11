@@ -2983,3 +2983,8 @@ We can achieve that through `React.memp()`
 
 App.jsx
 ```
+const MemoisedSlowComponent = memo(SlowComponent)
+```
+Out of the main `Function App()` we will denote which component we want to memoize by `React.memo/memo(Component_name)` & then we'll change the component in App function by `<MemoisedSlowComponent/>` 
+
+This way we can easily stop re-rendering in my application. But we've a lot of corner cases.

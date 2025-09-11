@@ -2947,3 +2947,39 @@ Hence, `RefactorComponent`'s children is not getting re-rendered even if the par
 
 Composition means building complex components by combining smaller, reusable ones. 
 * Instead of writing everything inside a single component, you “compose” the UI by splitting logic and presentation into different layers and then assembling them together.
+
+Now I've deleted the `RefactorComponent` wrapper from `App.jsx` & we came back to original implementation -
+```
+import { useState } from 'react';
+import './App.css'
+import SlowComponent from './SlowComponent'
+import Modal from './Modal';
+function App() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <button onClick={()=>setIsOpen(true)}>Modal</button>
+      {isOpen && <Modal close={() => setIsOpen(false)}/>}
+      <div>
+        Test Before Slow Component
+      </div>
+      <SlowComponent/>
+      <div>
+        Test After Slow Component
+      </div>
+
+    </>
+  )
+}
+
+export default App
+```
+If two different objects have different keyvalue pairs inside, they won't be considered same - hence they'll be re-rendered/mounted/un-mounted.
+
+**React recommends** that if a component in the parent hierarchy is guaranteed to stay the same and does not depend on changing state or props, you don’t need it to re-render every time the parent updates. In such cases, you can **memoize/ cache that component**.
+
+We can achieve that through `React.memp()`
+
+App.jsx
+```

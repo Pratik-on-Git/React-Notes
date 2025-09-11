@@ -3039,3 +3039,13 @@ React says if you want to stop re-rendering of this non-primitive prop then just
     
     So basically I can put dependency - a choice when I want my function/non-primitive value to re-render.
 
+There's Another prop named `useMemo()` for objects.
+```
+const someTime = useMemo(() => {
+    return [1000]
+  },[])
+```
+Whatever returned through `return` will be inside `time={someTime}`
+```
+<MemoisedSlowComponent time={someTime}>
+```

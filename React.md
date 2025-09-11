@@ -2988,3 +2988,54 @@ const MemoisedSlowComponent = memo(SlowComponent)
 Out of the main `Function App()` we will denote which component we want to memoize by `React.memo/memo(Component_name)` & then we'll change the component in App function by `<MemoisedSlowComponent/>` 
 
 This way we can easily stop re-rendering in my application. But we've a lot of corner cases.
+
+* Problems will start arriving when I want too pass a prop in that component `<MemoisedSlowComponent/>`
+
+Let's pass Time in the component as a prop.
+```
+const MemoisedSlowComponent = memo(({time}) => {
+  return (<SlowComponent time={time}/>)
+})
+
+  return (
+    <>
+      ...
+      <MemoisedSlowComponent time={1000}/>
+      ...
+    </>
+  )
+}
+```
+* The type of SlowComponent is gonna perform well for primitive type values but instead we use a non-primitive type value like an array `time={[1000]}`
+> in `SlowComponent.jsx` we'll push `waitingForSomething(time[0]);` as we want the 1st value.
+
+* When React element's `<MemoisedSlowComponent>` object will get returned, object will be memoized. But there's a new array (non-primitive) inside that object which is the prop `time={[1000]}`
+
+Now prior re-rendering, this array will be compared to the old & new versions in Virtual DOM. If two arrays are allocated in different addresses in memory it'll be considered different. 
+
+Hence, the whole component will get re-rendered even if it's memoized.
+
+✅ We can use a certain hooks to technically solve this problem again.
+
+React says if you've non-primitive props like arrays/functions - as a developer you decide weather you want to memoize the props or not. React provides you a hook named `useCallback()`
+```
+function App() {
+const [isOpen, setIsOpen] = useState(false);
+  const someFunction = () =>{}
+
+  return (
+    <>
+     ...
+      <MemoisedSlowComponent time={[1000]} custom={someFunction}/>
+      ...
+    </>
+  )
+}
+```
+
+React says if you want to stop re-rendering of this non-primitive prop then just wrap the whole function in `useCallback(() =>{}, [])`
+
+    The second [] in his is basically a dependency array. Suppose we put `useCallback(() =>{}, [isOpen])` in this array - when `isOpen` changes it's value, the callback we be re-rendered. 
+    
+    So basically I can put dependency - a choice when I want my function/non-primitive value to re-render.
+

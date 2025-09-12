@@ -3049,3 +3049,41 @@ Whatever returned through `return` will be inside `time={someTime}`
 ```
 <MemoisedSlowComponent time={someTime}>
 ```
+Let's make another slow component with same code except the passed props, we'll pass a children prop instead.
+```
+export default function AnotherSlowComponent({children}) {
+    waitingForSomething(1000);
+    return <>
+    Hello {children}</>
+}
+```
+Instead of being a memoized component `const memoAnotherComponent = memo(AnotherSlowComponent)`
+
+This will create issue in the code -
+```
+<memoAnotherComponent>
+  <div>Hello Slow Component</div>
+</memoAnotherComponent>
+```
+Now here I'm passing a JSX Component as a prop. Instead of the parent being Memoized everytime the `<div>Hello Slow Component</div>` will re-render as everytime there will be a `React.createElement` new call for this div.
+
+* If I memoize the child `const MemoChild = memo(()=>{ return <div>Hello Slow Component</div>})` & put it inside `<MemoAnotherComponent>` the problem will persist.
+
+* `MemoChild` is present in the children prop of the parent `<MemoAnotherComponent>`. Parents will be compared here in Virtual DOM. Everytime the parents will be made a new memoized `MemoChild` will be made & attached in the children prop.
+
+So to stop this issue for the case where you're having a children prop it's not likely to memoize that directly, instead 
+```
+function Child(){
+  return <div>Hello Slow Component</div>
+}
+
+function App() {
+const memoChild = useMemo (()=>{
+    return <Child/>
+  },[])
+...
+<MemoAnotherComponent>
+  {memoChild}
+</MemoAnotherComponent>
+```
+Previously when we were passing angle baracketed tags that was as good as calling the function again but now here in the `const memoChild` that value has been computed once by `useMemo` & not computed twice. So this is how we memoize children props.

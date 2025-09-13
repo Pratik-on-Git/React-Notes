@@ -3087,3 +3087,32 @@ const memoChild = useMemo (()=>{
 </MemoAnotherComponent>
 ```
 Previously when we were passing angle baracketed tags that was as good as calling the function again but now here in the `const memoChild` that value has been computed once by `useMemo` & not computed twice. So this is how we memoize children props.
+
+## 🌟 Key Props
+Let's make a basic To-Do List first. First file `TodoInput.jsx`
+```
+function TodoInput({onSubmit}){
+
+    const [inputValue, setInputValue] = useState();
+
+    function onFormSubmit(e){
+        e.prevent.default()
+        onSubmit?.(inputValue)
+    }
+    return(
+        <>
+        <form onSubmit={onFormSubmit}>
+            <input
+                type="text"
+                placeholder="Add Your To-Do Here"
+                onChange={(e)=>{setInputValue(e.target.value)}}
+                value={inputValue}
+            />
+            <button>ADD TO-DO</button>
+        </form>
+        </>
+    )
+}
+```
+* if callback of `onSubmit` exists then call it with input value. The new file next - `TodoList.jsx` & `TodoListItem.jsx`
+```

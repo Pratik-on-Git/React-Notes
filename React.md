@@ -3089,6 +3089,10 @@ const memoChild = useMemo (()=>{
 Previously when we were passing angle baracketed tags that was as good as calling the function again but now here in the `const memoChild` that value has been computed once by `useMemo` & not computed twice. So this is how we memoize children props.
 
 ## 🌟 Key Props
+React uses keys to identify which items have changed, been added, or removed in a list.
+
+When the key is stable (doesn’t change between renders), React can efficiently update only the changed DOM nodes.
+
 Let's make a basic To-Do List first. First file `TodoInput.jsx`
 ```
 function TodoInput({onSubmit}){
@@ -3098,6 +3102,7 @@ function TodoInput({onSubmit}){
     function onFormSubmit(e){
         e.prevent.default()
         onSubmit?.(inputValue)
+        setInputValue('')
     }
     return(
         <>
@@ -3115,4 +3120,117 @@ function TodoInput({onSubmit}){
 }
 ```
 * if callback of `onSubmit` exists then call it with input value. The new file next - `TodoList.jsx` & `TodoListItem.jsx`
+
+In `TodoList.jsx` if `listofTodos` exists add map function. It'll go to each to-do. We'll render `TodoListItem` from `TodoList`. `todo={todo}` passes the whole todo object.
 ```
+function TodoList({listofTodos}){
+  return(
+    <ul>
+      {
+        listofTodos?.map((todo)=>{
+          return(
+              <TodoListItem key={todo.id} todo={todo} />
+          )
+        })
+      }
+    </ul>
+  )
+}
+```
+`TodoListItem.jsx` is a component to list items which is passed inside `TodoList.jsx`
+```
+function TodoListItem({todo}){
+    return (
+        <li>
+            {todo.value}
+        </li>
+    )
+}
+```
+Now add them in `App.jsx`
+```
+function App() {
+    const [todos,setTodos] = useState ([{ id: 1, value: 'Do Homework' }])
+
+  function onTodoFormSubmit(value){
+    if(value){
+        // Old To-dos extracted out - ...todos. 
+      setTodos([...todos, {id: todos.length+1, value}])
+    }
+  }
+  return (
+    <>
+
+      <TodoInput onSubmit={onTodoFormSubmit}/>
+
+      <TodoList listofTodos={todos} />
+
+    </>
+  )
+}
+```
+* Each todo from `const [todos,setTodos]` will have one id property & value.
+* if value properly exist in `function onTodoFormSubmit(value)` it'll call `setTodos`. We'll make a new array inside as when we put array in a state we don't append in our old array. We've to always make a new Array. If we put new values in same array then it'll be treated as old array so no re-render will occur.
+
+In most cases, when working with a list of items, only a few items will be added or removed rather than the entire list being replaced. That’s why React requires a unique identifier for each item in the list — commonly referred to as a React Key — so it can efficiently track changes.
+
+  * Items having the same key prop across re-renders are not unmounted from the UI.
+* Myth: Key Props stops Re-Rendering. It helps not to unmount-remount
+
+Using the index of the array as a key is fine only if the list is static and will never change order
+* If we use Index of Each elements as Key Props - there are certain cases where things can be problematic
+  
+### 1️⃣ Adding a New Element at the Start of the List
+
+Imagine you have a list `['A','B','C']` and you render them with their index as key:
+* A → key 0
+* B → key 1
+* C → key 2
+
+Now you add X at the start: `['X','A','B','C']`
+* X → key 0
+* A → key 1
+* B → key 2
+* C → key 3
+
+**React sees:**
+
+Old `A (key 0)`replaced by new `X (key 0)` → It reuses the DOM node from A for X. UI may show wrong content or retain old input states.
+### 2️⃣ Sorting/Rearranging the List
+If you reorder the array items:
+
+`Old item A (key 0)` might move to index `2`, but React still sees `key 0` at the top.
+
+React reuses DOM nodes for wrong items → UI glitches, wrong animations, or stateful components swapping state.
+
+### 📝 Concrete Example
+```
+function App() {
+  const [items, setItems] = React.useState(["A", "B", "C"]);
+
+  return (
+    <div>
+      <button onClick={() => setItems(["X", ...items])}>Add at start</button>
+      <button onClick={() => setItems([...items].reverse())}>Reverse</button>
+
+      {items.map((item, index) => (
+        <input key={index} defaultValue={item} />
+      ))}
+    </div>
+  );
+}
+```
+* Add at start → old A input will now show X but still hold A’s state internally.
+* Reverse → inputs swap their values incorrectly.
+
+This happens because React reuses DOM nodes based on keys, not on values.
+
+### ✅ Better Approach
+
+Use a unique, stable ID from your data as the key:
+```
+{items.map((item) => (
+  <input key={item.id} defaultValue={item.name} />
+))}
+```
+If your data doesn’t have IDs, generate them when creating the list, not on each render (to keep them stable).

@@ -3248,3 +3248,126 @@ function TodoListItem({todo, onDelete}){
 ```
 `onDelete` Callback is gonna been rendered inside button. 
 #### How it'll get `X` button?
+
+Let's make a `DeleteTodo` function in `TodoList.jsx`
+```
+function deleteTodo(id){
+  console.log("Delete TO-Do With ID: ", id)
+}
+return(
+...
+```
+We need the ID of the each elements we'll pass `todo.id` in `onDelete()` - `TodoListItems.jsx`
+```
+function TodoListItem({todo, onDelete}){
+    return (
+        <li>
+            {todo.value}
+            <button onClick={()=>onDelete(todo.id)}> X </button>
+        </li>
+    )
+}
+
+export default memo(TodoListItem)
+```
+`onDelete` Callback has been passed here. Whenever we press the button `X` the callback will be called. Callback expects a parameter - id of todo.
+
+We're writing the defination of the callback in `function deleteTodo` & we'll pass it through 
+
+```
+<ul>
+  {listofTodos?.map((todo)=>{
+    return(
+      <TodoListItem key={todo.id} todo={todo} onDelete={deleteTodo}/>
+          ) 
+    })}
+</ul>
+```
+now we need to update the state upon clicking X - 
+```
+function TodoList({listofTodos, onDeleteTodo}){
+
+    function deleteTodo(id){
+        console.log("Delete TO-Do With ID: ", id)
+        onDeleteTodo?.(id)
+    }
+```
+If we've recieved `onDeleteTodo` from parent (`App.jsx`) then we'll pass it's `id`
+
+Now let's go to `App.jsx` & add a function which will set the todos-
+```
+const [todos,setTodos] = useState ([{ id: 1, value: 'Do Homework' }])
+
+  function deleteTodoById(id){
+    setTodos(todos.filter(todo => todo.id != id))
+  }
+```
+`Array.filter` (todos.filter) returns a new array in which the condition is - if the id of the elements matches with the given id (`deleteTodoById(id)`) remove it 
+
+We'll submit this to - `App.jsx` 
+```
+return (
+    <>
+      <TodoInput onSubmit={onTodoFormSubmit}/>
+
+      <TodoList listofTodos={todos} onDeleteTodo ={deleteTodoById}/>
+    </>
+  )
+```
+Interesting thing is that the all todos are gonaa re-render if we delete one of them. Even if we add todos now it's re-rendering the whole section.
+
+We can now `useCallback` hook to prevent this event.
+
+`TodoList.jsx`
+```
+function TodoList({listofTodos, onDeleteTodo}){
+
+    function deleteTodo(id){
+        console.log("Delete TO-Do With ID: ", id)
+        onDeleteTodo?.(id)
+    }
+
+    const memoDeleteTodoCallback = useCallback(deleteTodo, [onDeleteTodo])
+
+    return(
+        <ul>
+            {listofTodos?.map((todo)=>{
+                return(
+                    <TodoListItem key={todo.id} todo={todo} onDelete={memoDeleteTodoCallback}/>
+                ) 
+            })}
+        </ul>
+    )
+}
+```
+Still the issue will persist. We need to memoize `deleteTodoById(id)` from `App.jsx` also.
+```
+function App() {
+  // Each To-do will have one id property & value
+  const [todos,setTodos] = useState ([{ id: 1, value: 'Do Homework' }])
+
+  function deleteTodoById(id){
+    setTodos(todos.filter(todo => todo.id != id))
+  }
+
+  const memoDeleteTodoCallback = useCallback(deleteTodoById, [])
+
+  function onTodoFormSubmit(value){
+    // if value properly exist it'll call setTodos. We'll make a new array inside as when we put array in a state we don't append in our old array. We've to always make a new Array. If we put new values in same array then it'll be treated as old array so no re-render will occur.
+    if(value){
+        // Old To-dos extracted out - ...todos. 
+      setTodos([...todos, {id: todos.length+1, value}])
+    }
+  }
+  return (
+    <>
+
+      <TodoInput onSubmit={onTodoFormSubmit}/>
+
+      <TodoList listofTodos={todos} onDeleteTodo={memoDeleteTodoCallback}/>
+
+    </>
+  )
+}
+```
+Now None of the elements will re-render. But ther's another issue that's happening is - upon deleteing any of the elements all of the elements are getting deleted.

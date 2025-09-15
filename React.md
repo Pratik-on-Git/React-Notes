@@ -3353,7 +3353,6 @@ function App() {
   const memoDeleteTodoCallback = useCallback(deleteTodoById, [])
 
   function onTodoFormSubmit(value){
-    // if value properly exist it'll call setTodos. We'll make a new array inside as when we put array in a state we don't append in our old array. We've to always make a new Array. If we put new values in same array then it'll be treated as old array so no re-render will occur.
     if(value){
         // Old To-dos extracted out - ...todos. 
       setTodos([...todos, {id: todos.length+1, value}])
@@ -3371,3 +3370,26 @@ function App() {
 }
 ```
 Now None of the elements will re-render. But ther's another issue that's happening is - upon deleteing any of the elements all of the elements are getting deleted.
+
+We are not expecting todos here & that's why issues are happening:
+```
+const memoDeleteTodoCallback = useCallback(deleteTodoById, [])
+```
+We need to change callbacks both on `todos` & `setTodos`
+```
+const memoDeleteTodoCallback = useCallback(deleteTodoById, [todos,setTodos])
+```
+After this we'll see again all todos are gonaa re-render upon adding/deletion. 
+* This is happening cause `onDelete` changed. 
+* `onDelete` changed because of `{listofTodos, onDeleteTodo}` (onDeleteTodo) changed. 
+* `onDeleteTodo` changed because of `todos` are getting changed.
+
+Now suppose if we're not changing the callback upon changes of `todos`- `App.jsx`
+```
+const memoDeleteTodoCallback = useCallback(deleteTodoById, [setTodos])
+```
+Now the whole re-rendering issue will be resolved. But if I delete one of the element multiple elements are getting deleted. 
+* This issue is happening cause in `id` we've kept indexes -
+```
+const [todos,setTodos] = useState ([{ id: 1, value: 'Do Homework' }])
+```

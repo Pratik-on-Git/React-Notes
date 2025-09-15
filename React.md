@@ -3234,3 +3234,17 @@ Use a unique, stable ID from your data as the key:
 ))}
 ```
 If your data doesn’t have IDs, generate them when creating the list, not on each render (to keep them stable).
+
+Now we're updating the code - `TodoListItems.jsx`
+```
+function TodoListItem({todo, onDelete}){
+    return (
+        <li>
+            {todo.value}
+            <button onClick={onDelete}> X </button>
+        </li>
+    )
+}
+```
+`onDelete` Callback is gonna been rendered inside button. 
+#### How it'll get `X` button?

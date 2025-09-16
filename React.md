@@ -3389,7 +3389,122 @@ Now suppose if we're not changing the callback upon changes of `todos`- `App.jsx
 const memoDeleteTodoCallback = useCallback(deleteTodoById, [setTodos])
 ```
 Now the whole re-rendering issue will be resolved. But if I delete one of the element multiple elements are getting deleted. 
-* This issue is happening cause in `id` we've kept indexes -
+* This issue is happening cause in `id` we've kept indexes. So If I delete things from middle things will start to unmount -
 ```
 const [todos,setTodos] = useState ([{ id: 1, value: 'Do Homework' }])
 ```
+So we're gonna change the keyprop inside `TodoList.jsx` 
+```
+return(
+  <TodoListItem key={todo.value} todo={todo} onDelete={memoDeleteTodoCallback}/>)
+```
+Now the issue arrives that If I delete a single one - all of them are getting deleted. So now I'll be changing all the Ids with `value`
+
+`TodoListItem.jsx`
+```
+<button onClick={()=>onDelete(todo.value)}> X </button>
+```
+`TodoList.jsx`
+```
+function TodoList({listofTodos, onDeleteTodo}){
+
+    function deleteTodo(v){
+        console.log("Delete TO-Do With ID: ", v)
+        onDeleteTodo?.(v)
+    }
+...
+            {listofTodos?.map((todo)=>{
+                return(
+                    <TodoListItem key={todo.value} todo={todo} onDelete={memoDeleteTodoCallback}/>
+                ...
+```
+`App.jsx`
+```
+function App() {
+  const [todos,setTodos] = useState ([{ }])
+
+  function deleteTodoById(value){
+    setTodos(todos.filter(todo => todo.value != value))
+  }
+
+  const memoDeleteTodoCallback = useCallback(deleteTodoById, [setTodos])
+
+  function onTodoFormSubmit(value){
+    if(value){
+        // Old To-dos extracted out - ...todos. 
+      setTodos([...todos, {value}])
+    }
+  }
+  return (
+    <>
+      <TodoInput onSubmit={onTodoFormSubmit}/>
+      <TodoList listofTodos={todos} onDeleteTodo={memoDeleteTodoCallback}/>
+    </>
+  )
+}
+```
+We'll see that upon clicking on `X` it's selecting the correct element to delete but it's also sending completely blank array for both `todos`, `newTodos`
+```
+const [todos,setTodos] = useState ([])
+
+  function deleteTodoById(value){
+    const newTodos = todos.filter(todo => todo.value != value)
+    console.log(todos, newTodos)
+    setTodos(newTodos)
+  }
+  ```
+Here any deletion is causing the whole array to delete. the issue is happening due to `setTodos` function getting passed in dependency array. As `setTodos` function was getting changed - the whole `todos` array was getting empty.
+
+`App.jsx`
+```
+const memoDeleteTodoCallback = useCallback(deleteTodoById, [todos])
+```
+Now our deletion logic is working correctly but still the whole section is getting re-rendered -
+
+The main issues causing re-renders are:
+* `onTodoFormSubmit` function is not memoized - This creates a new function on every render
+* `deleteTodoById` has todos in its dependency array - This causes the callback to be recreated every time todos change
+* `TodoList` component is not memoized - Even though individual items are memoized, the list container re-renders
+
+#### Memoize `onTodoFormSubmit` function
+Used `useCallback` with an empty dependency array []
+Used the functional state update pattern `setTodos(prevTodos => ...)` to avoid depending on the current todos state.
+```
+const onTodoFormSubmit = useCallback((value) => {
+    if(value){ 
+      setTodos(prevTodos => [...prevTodos, {value}])
+    }
+  }, [])
+```
+Fixed `deleteTodoById` function
+```
+const deleteTodoById = useCallback((value) => {
+    setTodos((previousTodos) => previousTodos.filter((todo) => todo.value != value))
+  }, [])
+```
+Final `App.jsx`
+```
+function App() {
+  const [todos,setTodos] = useState ([])
+
+  const deleteTodoById = useCallback((value) => {
+    setTodos((previousTodos) => previousTodos.filter((todo) => todo.value != value))
+  }, [])
+
+  const onTodoFormSubmit = useCallback((value) => {
+    if (value) {
+      setTodos((previousTodos) => [...previousTodos, { value }])
+    }
+  }, [])
+  return (
+    <>
+
+      <TodoInput onSubmit={onTodoFormSubmit}/>
+
+      <TodoList listofTodos={todos} onDeleteTodo={deleteTodoById}/>
+
+    </>
+  )
+}
+```
+stabilized `onDeleteTodo` and `onSubmit` in `App.jsx` using `useCallback` with functional state updates so their identities stop changing and memoized children don’t re-render unnecessarily.

@@ -3508,3 +3508,13 @@ function App() {
 }
 ```
 stabilized `onDeleteTodo` and `onSubmit` in `App.jsx` using `useCallback` with functional state updates so their identities stop changing and memoized children don’t re-render unnecessarily.
+
+If you've put the same Values in Input. The Console will show uncaught error. Error showing cause key prop values are same. 
+### `Keyprop` dosen't help you in re-rendering. If you give proper key props, you can stop mounting-unmounting of an element.
+
+### ➡️ Can we forcefully mount/un-mount an element using keyprops?
+If we write a key like this - `<Sample key={Math.floor(Math.random()*99)}/>` everytime the program will run it'll generate different unique numbers as key value. 
+
+Hence the programe will be unmounted & re-mounted everytime differently so React will check before remounting & after remounting - It'll get new keyprop values everytime so it'll consider the component as a new component. 
+
+➡️ So even if the component is previously memoized it'll not matter. So you can actually re-render the component using keyprop as a hack.

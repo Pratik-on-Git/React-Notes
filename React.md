@@ -3518,3 +3518,44 @@ If we write a key like this - `<Sample key={Math.floor(Math.random()*99)}/>` eve
 Hence the programe will be unmounted & re-mounted everytime differently so React will check before remounting & after remounting - It'll get new keyprop values everytime so it'll consider the component as a new component. 
 
 ➡️ So even if the component is previously memoized it'll not matter. So you can actually re-render the component using keyprop as a hack.
+
+## 🌟 React Reconcillation 
+```
+function Input({type, placeholder}){
+  return <input type={type} placeholder={placeholder}/>
+}
+
+function App() {
+  const [isStudent, setStudent] = useState(false)
+
+  return (
+    <>
+      <form>
+        <Input type="text" placeholder="Enter Your Name"/>
+        <br />
+        <input type="checkbox" 
+        id="student" 
+        name='student'
+        value={isStudent}
+        onChange={()=>setStudent(!isStudent)}/>
+
+      <label htmlFor="student">Are You A Student?</label>
+      </form>
+      {isStudent? <Input type='text' placeholder="Enter Your College"/>: <Input type='text' placeholder="Enter Your Company"/>}
+    </>
+  )
+}
+```
+
+In this example we'll get an Input inside a form which will ask our name. Next there's a checkbox. On click it'll change & toggle two states of the next input box - Enter Your Company/Enter Your College.
+* Now we'll see that when the Second input box is blank it'll toggle between `Enter Your Company/Enter Your College` properly but once I fill it with any of the words it'll stop re-mounting & unmounting. Basically it'll not change anything upon the checkbox click.
+
+### Why?
+As we know that Virtual DOM checks the after & before of any component - First it checks it's memory address, then type of the componenet. Either it can be a function or a string (like `<div>`)
+
+So here when It checks the type it stays the same input type before & after we click on checkbox - basically after & before state changes. So no mounting - un-mounting is happening.
+
+Now If we've put a `<div>` instead the whole component would have mounted & un-mounted based on click on checkbox
+```
+{isStudent? <Input type='text' placeholder="Enter Your College"/>: <div>Pratik<div>}
+```

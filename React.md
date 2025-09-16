@@ -3559,3 +3559,37 @@ Now If we've put a `<div>` instead the whole component would have mounted & un-m
 ```
 {isStudent? <Input type='text' placeholder="Enter Your College"/>: <div>Pratik<div>}
 ```
+In re-rendering no DOM node is getting destroyed & the node is not gonna loose it's property - until it's unmounting/re-mounting. During our re-renders Reconcillation algorithm helps React to destroy & restruct least numbers of DOM nodes.
+
+* Now to avoid the issue we're facing right now we can trigger mannual mounting unmounting.
+```
+{isStudent? <Input type='text' placeholder="Enter Your Company"/>: null}
+      {!isStudent? <Input type='text' placeholder="Enter Your College"/>: null}
+```
+Also if we've two elements with same type but different key properties we'll be giving a priority to key property.
+```
+{isStudent? <Input type='text' placeholder="Enter Your Company" key="company"/>: <Input type='text' placeholder="Enter Your College" key="college"/>}
+```
+So,
+* If type is diff, then unmount the old component and mount the new one.
+* if type is same, but key prop is diff then also unmount the old one and mount the new one.
+* If type is same and key is either same or not present, then only we will re-render the component without destroying anything.
+
+### ➡️ React Fiber
+React v16 React Fiber became the part of React's Core Reconcillation Algorithm.
+* Before React Fiber, things were synchronus in nature. Suppose you need to change a state so the change will.
+*We've a lot of UIs which are not dependent in nature - So why not shifting this synchronus nature to asynchronus nature. 
+* Changes/updates are now divided into smaller units & each units are independent & dosen't inturupt each other. 
+
+  1. To pause work & come back to it later
+  2. assign priority to differnt types of works
+  3. reuse previously completed work.
+  4. abort work if it's no longer needed.
+
+In order to do any of these, we need to first make a way to break work into units. In one sense that's what React Fiber is.
+* A fiber represents a unit of work.
+
+It's a very low-level abstraction than application developers typically think about.
+
+
+

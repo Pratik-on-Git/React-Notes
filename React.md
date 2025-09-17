@@ -3591,5 +3591,7 @@ In order to do any of these, we need to first make a way to break work into unit
 
 It's a very low-level abstraction than application developers typically think about.
 
+Link For More Theory: https://github.com/acdlite/react-fiber-architecture
+
 
 

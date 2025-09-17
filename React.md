@@ -3593,5 +3593,13 @@ It's a very low-level abstraction than application developers typically think ab
 
 Link For More Theory: https://github.com/acdlite/react-fiber-architecture
 
+## 💡React Refs
+At times you might need to access the DOM Elements directly.
+Example:
+* You've a Form & button underneath. That Form consits a `Email` Input & Password `Input` section. At the end there's `Submit` button.
+
+Now In this form we want to put some validation like - if the user have given a proper email id or not. If not we want to show to the user that you've given wrong email address. Also I want that form's Input field to be in focus (maybe a Red Border)
+
+
 
 

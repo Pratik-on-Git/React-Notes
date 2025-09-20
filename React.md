@@ -3600,6 +3600,82 @@ Example:
 
 Now In this form we want to put some validation like - if the user have given a proper email id or not. If not we want to show to the user that you've given wrong email address. Also I want that form's Input field to be in focus (maybe a Red Border)
 
+in Plain JS
+```
+btn.addEventListener("click",(e){
+  console.log(input.focus);
+  input.focus()
+})
+```
+Upon clicking on the button the `.focus()` function will run & a border will appear (active field) over the input field. We want this same type of thing.
 
+To understand this one deeper we'll write a code
 
+`App.jsx`
+```
+function App() {
+  const [focus, setfocus] = useState(false)
 
+  function handleClick(){
+    setfocus(!focus)
+  }
+
+  return (
+    <>
+    <input  
+      type='email'
+      autoFocus={focus}
+    />
+    <br/>
+    <input
+      type='password'
+    />
+    <br/>
+    <button onClick={handleClick}>
+      Submit
+    </button>
+    </>
+  )
+}
+```
+* `setfocus(!focus)`- Need constant interaction. If False --> True & Vice Versa
+* `autoFocus={focus}` will not work if we put this cause Autofocus property only works while component mounting only. Focus property once set in Element of the DOM tree - Now we're not changing the specific DOM property until I'm unmounting & remounting the component.
+* So Instead we can just use simple js. Give the selected input field an `id` & `document.getElementById`
+```
+<input  
+  type='email'
+  id="email"/>
+```
+```
+function handleClick() {document.getElementById("email").focus()}
+```
+This is the first type of implementation we can do.
+
+Now going to the second type of implementation - `Refs`.
+Through this we can directly access DOM & DOM related properties. We're directly connecting with DOM instead of Virtual DOM.
+* The text we write in input fields goes to `value` property.
+
+### Defination
+Refs is a mutable object that preserves it's value between re-renders.
+* Can preserves value in b/w two re-renders.
+* If we want to change it manually we can - Mutable Object
+* Changing Ref values manually dosen't cause Re-render. State variable re-renders.
+
+Syntax
+```
+const ref = useRef(initialValue)
+```
+`useRef` returns a mutable ref object whose .current property is initialized to the passed argument (`initialValue`). 
+* If we write `useRef(0)` - then current property's value will be saved in current object with that value:
+```
+{
+  current:0   // Value you passed to useRef
+}
+```
+`customref.current = 0`
+```
+const customref = useRef(0)
+```
+Custom Ref persisits their value while re-rendering.
+
+### Use Case: Accsessing the elements

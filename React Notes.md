@@ -80,3 +80,96 @@ _Example: Amazon, Wordpress, Old school sites_
 * Slower navigation (full page reloads upon each interaction)
 * Less interactivity (more clunky UX)
 * Harder to maintain state (e.g Shopping Cart across pages)
+
+### 👉 Where to use SPA & MPA**
+* If you need a dynamic, app alike experience you need to use SPA (e.g SaaS Tool, Social Network Site)
+* If you prioritize SEO, Simplicity, Server-Driven content you need to use MPA (e.g Blogs, News etc.)
+
+### ➿ Hybrid Approach
+Modern frameworks like **Next.JS (React), Nuxt.JS (Vue)** allows **SSR + SPA** hybrid models for a better SEO & Optimization.
+
+This approach is best for both cases. 
+
+### React Code in HTML:
+```
+<body>
+    <div id="root"></div>
+</body>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+
+<script>
+    function App() {
+        return React.createElement('h1', {}, 'Hello, React!');
+    }
+    const rootContainer = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootContainer);
+    root.render(App());
+</script>
+```
+
+### 👨‍💻 React application is made up of Multiple Components
+* Each of them are **responsible for outputting a small, reusable piece of HTML**. 
+* **Components can be nested within other components to allow complex applications** to be built out of simple building blocks.
+
+### 👉 Key Features of React
+
+1. **Component Based Architecture :** React apps are built using reusable components, making code easier to manage & scale
+
+2. **Virtual DOM :** React uses a Virtual DOM to efficiently update only the parts of the page that change, improving performance.
+
+3. **Declare Syntax :** Instead of manually updating the DOM like Vanilla JS, you describe how the UI should look & React handle updates automatically.
+
+4. **Strong Ecosystem :** React has a massive community, tons of libraries (like Redux, Next.JS & Extensive documentation)
+
+5. **Works with other frameworks :** React can be integrated with backend/mobile apps. (Node.JS, Django) [React Native]
+
+### 📚 Library
+A collection of pre-written functions/modules that you can call as needed. It only provides the boilerplate for the project.
+
+**Key Idea :** You can control the application's flow & structure. The library will provide you utility.
+
+**Analogy :** Like a toolbox, you'll pick which tools (functions) to use & when to use.
+
+_Example: React (UI Library), Loadash (Utility Function), JQuery (DOM Manipulation)_
+
+**Charecteristics :**
+
+1. Flexibility : Uses only what I need
+2. Less Opinionated : No Strict rules on application structure
+3. More Responsibility : You decide how to integrate everything together.
+
+### 🖼️ Framework
+A fully featured structure that dictates how to build an application (includes library, tools, rules)
+
+**Key Idea :** It controls the application's flow. The library will provide you utility.
+
+**Analogy :** Like a blueprint, you build within it's rules.
+
+_Example: Angular, Django, Ruby on Rails_
+
+**Charecteristics :**
+
+1. Built in tools like tools for routing, state management etc. is already included.
+2. Scalability : Enforces best practices for large teams.
+3. Less flexibility : Must follow the framework's convention.
+
+### ⚛ React A _Framework_ or _Library_
+**React is a library (for UI components), but it's an ecosystem (React Router, Redux, Next.JS) can feel like a framework.**
+
+*Next.JS is a framework built on React* as it adds *routing, SSR* and other opinionated features.
+
+### ➡️ Why does Library/Framework matter?
+Libraries give you freedom but requires more decisions. While Frameworks speed up the development but limit flexibility. 
+* We use library if we need lightweight control (e.g React for dynamic UI)
+* We use a framework if we want to Structure/Reliability (e.g Angular for Enterprise Applications)
+
+| Features  | Library (e.g React) | Framework (e.g Angular) |
+| :-------------: | :-------------: |:-------------:|
+| Control Flow|You call the library | Framework calls your code
+| Flexibility |High (Pick & Choose)  | Low (Follow Conventions)
+| Use Case    |Add functionality to an app|Build fullstack apps
+| Learning Curve    |Easier to Start|Steaper
+| Use Case    |Lightweight|Often heavier
+

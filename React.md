@@ -3679,3 +3679,24 @@ const customref = useRef(0)
 Custom Ref persisits their value while re-rendering.
 
 ### Use Case: Accsessing the elements
+Going too the old programme we write  - we can add 
+```
+const inputRef = useRef(null)
+```
+Which basically means - I'm initializing `null` here & then you can add a `ref` property & pass the object like this.
+```
+<input  
+  type='email'
+  ref={inputRef}
+/>
+```
+* `inputRef`'s current property will be allocated with `input email`
+
+Ref is allocated an element when the element is already rendered & allocated in the DOM. We'll be having an element in React which is pointing directly to DOM.
+
+Now we can just use this function instead of `document.getElement`
+```
+function handleClick(){
+    inputRef.current.focus()
+  }
+```
